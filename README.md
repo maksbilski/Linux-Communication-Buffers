@@ -49,10 +49,14 @@ The project includes several test cases to verify the correct operation of the c
 
 To run a specific test, compile the corresponding test file using the `Makefile`, or manually compile it using a command like:
 
+```bash
 gcc -o test_binary test_file.c communication_buffers.c resource_management.c process_semaphores.c -lpthread -lrt
+```
 
 Then execute the compiled binary:
 
+```bash
 ./test_binary
+```
 
 These tests are crucial for ensuring the reliability and correctness of the inter-process communication implemented in this project.
