@@ -1,0 +1,784 @@
+1.6.4. Różne wywołania systemowe
+Istnieje również szereg innych wywołań systemowych. W tym punkcie przyjrzymy się czterem
+spośród nich. Wywołanie chdir zmienia bieżący katalog roboczy. Po następującym wywołaniu:
+chdir("/usr/adam/test");
+operacja open wykonana w odniesieniu do pliku xyz spowoduje otwarcie pliku /usr/ ast/test/xyz.
+Pojęcie katalogu roboczego eliminuje potrzebę ciągłego wpisywania (długich) bezwzględnych
+nazw ścieżek.
+W systemie UNIX każdemu plikowi jest przypisany tryb, który spełnia rolę zabezpieczeń. Tryb
+zawiera bity opisujące prawa do odczytu, zapisu i uruchamiania dla właściciela, grupy i pozo-
+stałych. Wywołanie systemowe chmod umożliwia zmianę trybu pliku. I tak, aby plik był dostępny
+tylko do odczytu dla wszystkich oprócz właściciela, można skorzystać z następującego polecenia:
+chmod("plik", 0644);
+Wywołanie systemowe kill to metoda, dzięki której użytkownicy i procesy użytkowników
+wysyłają sygnały. Jeśli proces jest przygotowany do przechwycenia określonego sygnału, to
+kiedy ten sygnał nadejdzie, uruchamiana jest procedura obsługi sygnału. Jeżeli proces nie jest
+przygotowany do obsługi sygnału, to nadejście sygnału powoduje zniszczenie procesu (stąd
+nazwa wywołania).
+W standardzie POSIX zdefiniowano kilka procedur dotyczących czasu. I tak wywołanie time
+zwraca bieżącą godzinę w sekundach, przy czym liczba 0 odpowiada dacie 1 stycznia 1970 o pół-
+nocy (równo z początkiem dnia, a nie jego końcem). W komputerach posługujących się 32-bitowymi
+słowami maksymalna wartość, jaką może zwrócić wywołanie time, wynosi 232−1 s (przy zało-
+żeniu, że wykorzystano wartość typu integer bez znaku). Wartość ta wystarcza na niewiele ponad
+136 lat. Tak więc w 2106 roku nastąpi przepełnienie wartości czasu w 32-bitowych systemach
+UNIX. Problem ten przypomina nieco problem 2000 roku (Y2K), którego nadejście miało spo-
+wodować chaos w komputerach, gdyby branża komputerowa nie podjęła zmasowanych wysił-
+ków zmierzających do rozwiązania problemu. Jeśli obecnie ktoś ma 32-bitowy system UNIX,
+zalecamy zakup 64-bitowego jeszcze przed nadejściem 2106 roku.
+1.6.5. Interfejs Win32 API systemu Windows
+Do tej pory koncentrowaliśmy się głównie na Uniksie. Teraz nadszedł czas, by pokrótce przyjrzeć
+się systemowi Windows. Systemy Windows i UNIX różnią się zasadniczo stosowanymi w nich
+modelami programowania. Program w Uniksie zawiera kod realizujący różne operacje oraz
+wykonujący wywołania systemowe w celu realizacji określonych usług systemowych. Dla odróż-
+nienia program windowsowy jest zwykle sterowany zdarzeniami. Program główny oczekuje na
+wystąpienie określonego zdarzenia, a następnie wywołuje procedurę, która to zdarzenie obsłu-
+guje. Typowymi zdarzeniami są wciśnięcia klawiszy, poruszanie myszą, wciśnięcie przycisku
+myszy lub włożenie płyty CD-ROM do napędu. Następnie są wywoływane procedury obsługi,
+które przetwarzają zdarzenie, aktualizują ekran i uaktualniają wewnętrzny stan programu. W kon-
+sekwencji prowadzi to do nieco innego stylu programowania niż w systemie UNIX. Ponieważ
+jednak niniejsza książka koncentruje się na funkcji i strukturze systemów operacyjnych, nie
+będziemy się zbytnio zajmować tymi różnymi modelami programowania.
+Oczywiście w systemie Windows również są wywołania systemowe. W systemie UNIX
+istnieje relacja prawie jeden do jednego pomiędzy wywołaniami systemowymi (np. read) a pro-
+cedurami bibliotecznymi wykorzystywanymi do ich uruchamiania. Inaczej mówiąc, dla każdego
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.pl86
+WPROWADZENIE
+ROZ. 1
+wywołania systemowego istnieje w przybliżeniu jedna procedura biblioteczna służąca do jego
+wywołania (co widać na rysunku 1.17). Co więcej, w standardzie POSIX jest tylko około 100
+wywołań procedur.
+W systemie Windows sytuacja jest radykalnie różna. Po pierwsze wywołania biblioteczne
+i wywołania systemowe w dużej części nie są ze sobą związane. Firma Microsoft zdefiniowała
+zbiór wywołań procedur znany jako Win32 API (Application Program Interface), z którego pro-
+gramiści powinni korzystać w celu uzyskania usług systemu operacyjnego. Interfejs ten jest
+(przynajmniej częściowo) obsługiwany przez wszystkie wersje systemu Windows, począwszy
+od Windows 95. Dzięki oddzieleniu interfejsu od właściwych wywołań systemowych firma
+Microsoft zachowała zdolność zmiany wywołań systemowych w czasie bez wpływu na działa-
+nie istniejących programów. Zbiór wywołań tworzący interfejs Win32 API jest również trochę
+rozmyty, ponieważ w systemach Windows istnieje wiele nowych wywołań, które wcześniej nie
+były dostępne. W tym punkcie Win32 oznacza interfejs obsługiwany przez wszystkie wersje
+systemu Windows. Interfejs Win32 API zapewnia kompatybilność pomiędzy wersjami systemu
+Windows.
+Lista wywołań Win32 API jest bardzo długa, rzędu kilku tysięcy. Co więcej, o ile wiele
+z nich uruchamia wywołania systemowe, znaczna liczba jest realizowana w całości w przestrzeni
+użytkownika. W konsekwencji w systemie Windows nie sposób stwierdzić, co jest wywoła-
+niem systemowym (tzn. jest wykonywane przez jądro systemu), a co jest wywołaniem biblio-
+tecznym przestrzeni użytkownika. W rzeczywistości to, co jest wywołaniem systemowym
+w jednej wersji Windowsa, może być wykonane w przestrzeni użytkownika w innej wersji
+i odwrotnie. Podczas omawiania windowsowych wywołań systemowych w niniejszej książce
+będziemy się posługiwać procedurami Win32 (tam, gdzie będzie to właściwe), ponieważ firma
+Microsoft gwarantuje, że będą one stabilne w czasie. Warto jednak zapamiętać, że nie wszystkie
+one są rzeczywistymi wywołaniami systemowymi (tzn. nie wszystkie odwołują się do jądra).
+Interfejs Win32 API zawiera wiele wywołań do zarządzania oknami, figurami geometrycz-
+nymi, tekstem, czcionkami, paskami przewijania, oknami dialogowymi, menu oraz wieloma innymi
+elementami interfejsu GUI. O ile podsystem graficzny działa w jądrze (co jest prawdziwe
+w niektórych, choć nie we wszystkich wersjach systemu Windows), są to wywołania systemowe.
+W innym przypadku są to, po prostu, wywołania biblioteczne. Czy powinniśmy omawiać te
+wywołania w niniejszej książce, czy nie? Ponieważ nie są one faktycznie związane z funkcjami
+systemu operacyjnego, postanowiliśmy ich nie omawiać, mimo że część z nich może być wyko-
+nywana w jądrze. Czytelnicy zainteresowani interfejsem Win32 API powinni sięgnąć do jednej
+z kilku pozycji poświęconych temu zagadnieniu, np. [Hart, 1997], [Rector i Newcomer, 1997],
+[Simon, 1997].
+Nawet pobieżne wprowadzenie we wszystkie wywołania Win32 API nie wchodzi w rachubę.
+W związku z tym skupimy się na tych wywołaniach, które w przybliżeniu odpowiadają funk-
+cjom wywołań systemu UNIX z tabeli 1.1. Wywołania te zestawiono w tabeli 1.2.
+Spróbujemy teraz pobieżnie przyjrzeć się wywołaniom z tabeli 1.2. Wywołanie CreateProcess
+tworzy nowy proces. Jego działanie można porównać do połączonego działania wywołań fork
+i execve w systemie UNIX. Ma ono wiele parametrów określających właściwości nowo tworzo-
+nego procesu. W systemie Windows nie występuje pojęcie hierarchii procesów, takie jak w sys-
+temie UNIX, dlatego nie istnieją pojęcia procesu-rodzica i procesu-dziecka. Po utworzeniu proces
+tworzony jest identyczny z tworzącym. Wywołanie WaitForSingleObject służy do oczekiwania na
+wystąpienie zdarzenia. Istnieje możliwość oczekiwania na wiele różnych zdarzeń. Jeśli użyjemy
+parametru do określenia procesu, proces wywołujący oczekuje na zakończenie procesu okre-
+ślonego przez parametr. Do zakończenia wykonywania procesu służy wywołanie ExitProcess.
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plPODROZ. 1.6.
+WYWOŁANIA SYSTEMOWE
+87
+Tabela 1.2. Wywołania Win32 API, które w przybliżeniu odpowiadają wywołaniom systemu
+UNIX zaprezentowanym w tabeli 1.1. Warto podkreślić, że w systemie Windows istnieje bardzo
+dużo innych wywołań systemowych, z których większość nie posiada odpowiedników w Uniksie
+UNIX
+Win32
+Opis
+forkCreateProcessUtworzenie nowego procesu
+waitpidWaitForSingleObjectOczekuje na zakończenie procesu
+execve(brak)CreateProcess = fork+execve
+exitExitProcessZakończenie działania procesu
+openCreateFileUtworzenie pliku lub otwarcie istniejącego pliku
+closeCloseHandleZamknięcie pliku
+readReadFileOdczyt danych z pliku
+writeWriteFileZapis danych do pliku
+lseekSetFilePointerPrzesuwa wskaźnik pliku
+statGetFileAttributesExPobiera różne atrybuty pliku
+mkdirCreateDirectoryTworzy nowy katalog
+rmdirRemoveDirectoryUsuwa pusty katalog
+link(brak)Interfejs Win32 nie obsługuje dowiązań
+unlinkDeleteFileUsuwa istniejący plik
+mount(brak)Interfejs Win32 nie obsługuje montowania systemów plików
+umount(brak)Win32 nie obsługuje polecenia mount, więc nie ma również polecenia
+umount
+chdirSetCurrentDirectoryZmienia bieżący katalog roboczy
+chmod(brak)Interfejs Win32 nie obsługuje zabezpieczeń plików (choć system NT
+je obsługuje)
+kill(brak)Interfejs Win32 nie obsługuje sygnałów
+timeGetLocalTimeOdczytuje bieżącą godzinę
+Następne sześć wywołań dotyczy operacji na plikach. Na poziomie funkcjonalnym są one
+podobne do ich odpowiedników w systemie UNIX, choć różnią się parametrami i szczegółami.
+Jednak, podobnie jak w Uniksie, pliki można otwierać, zamykać, czytać i zapisywać. Wywołania
+SetFilePointer i GetFileAttributesEx ustawiają pozycję w pliku i odczytują niektóre atrybuty
+pliku.
+W systemie Windows występują katalogi. Tworzy się je odpowiednio za pomocą wywołań
+CreateDirectory i RemoveDirectory. Istnieje również pojęcie bieżącego katalogu, który ustawia
+się za pomocą wywołania SetCurrentDirectory. Bieżący czas można odczytać za pomocą wywo-
+łania GetLocalTime.
+W interfejsie Win32 nie występują pojęcia dowiązań do plików, montowania systemu pli-
+ków, zabezpieczeń i sygnałów. W związku z tym nie istnieją odpowiedniki wywołań z systemu
+UNIX, które realizowałyby te operacje. Oczywiście interfejs Win32 zawiera szereg innych
+wywołań, których nie ma w Uniksie. Dotyczą one zwłaszcza operacji na interfejsie GUI. W sys-
+temie Windows Vista istnieje rozbudowany system zabezpieczeń. System ten obsługuje rów-
+nież dowiązania do plików. W systemach Windows 7 i Windows 8 dodano kolejne nowe funkcje
+i wywołania systemowe.
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plWPROWADZENIE
+88
+ROZ. 1
+I ostatnia uwaga dotycząca interfejsu Win32: nie jest to zbyt jednolity ani spójny interfejs.
+Główną przesłanką podczas jego tworzenia było zachowanie zgodności wstecz z 16-bitowym
+interfejsem stosowanym w systemach Windows 3.x.
+1.7. STRUKTURA SYSTEMÓW OPERACYJNYCH
+1.7.
+STRUKTURA SYSTEMÓW OPERACYJNYCH
+Teraz, kiedy zobaczyliśmy, jak wyglądają systemy operacyjne z zewnątrz (tzn. interfejs pro-
+gramisty), nadszedł czas, by zajrzeć do środka. Aby uzyskać możliwie pełny obraz możliwości,
+w kolejnych punktach omówimy sześć różnych struktur systemów operacyjnych, które były
+stosowane w historii. Nie jest to w żadnym razie pełny zbiór, ale daje wyobrażenie o projektach,
+które stosowano w praktyce. Sześć wspomnianych projektów to systemy monolityczne, war-
+stwowe, mikrojądra, klient-serwer, maszyny wirtualne i egzojądra.
+1.7.1. Systemy monolityczne
+W systemach monolitycznych, które należą do najczęściej stosowanych, system operacyjny
+działa jako pojedynczy program w trybie jądra. Jest on napisany jako kolekcja procedur powią-
+zanych ze sobą w jednowarstwowy, rozbudowany binarny program wykonywalny. W przypadku
+stosowania tej techniki każda procedura w systemie może wywołać dowolną inną, pod warunkiem
+że zapewnia ona wykonanie przydatnych obliczeń. Możliwość wywołania dowolnej procedury
+gwarantuje bardzo dużą wydajność, ale występowanie wielu tysięcy procedur, które bez ogra-
+niczeń wzajemnie się wywołują, często prowadzi do niezrozumiałego i trudnego do opanowania
+systemu. Ponadto awaria w dowolnej z tych procedur może doprowadzić do unieruchomienia
+całego systemu operacyjnego.
+Aby utworzyć program obiektowy systemu operacyjnego w przypadku zastosowania tego
+podejścia, najpierw należy skompilować wszystkie procedury (lub pliki zawierające te proce-
+dury), a następnie skonsolidować je w pojedynczy wykonywalny plik, za pomocą systemowego
+programu konsolidującego (tzw. linkera). Przy takim podejściu praktycznie nie ma możliwości
+ukrywania informacji — każda procedura jest widoczna dla każdej innej procedury (w odróżnie-
+niu od struktury złożonej z modułów lub pakietów, gdzie większość informacji jest ukrytych
+wewnątrz modułów, a z zewnątrz modułu można wywołać jedynie oficjalnie wyznaczone punkty
+wejścia).
+Tymczasem nawet systemy monolityczne mogą mieć określoną strukturę. Żądania usług
+(wywołań systemowych) udostępnianych przez system operacyjny są realizowane poprzez
+umieszczenie parametrów w zdefiniowanym miejscu (np. na stosie), a następnie uruchomienie
+instrukcji pułapki. Instrukcja ta przełącza maszynę z trybu użytkownika do trybu jądra i prze-
+kazuje sterowanie do systemu operacyjnego, co na rysunku 1.17 pokazano jako krok 6. Następ-
+nie system operacyjny pobiera parametry i decyduje o tym, jakie wywołanie systemowe zosta-
+nie przeprowadzone. Następnie system odwołuje się do tabeli, która pod pozycją k zawiera
+wskaźnik do procedury realizującej wywołanie systemowe k (krok 7. na rysunku 1.17).
+Organizacja ta sugeruje podstawową strukturę systemu operacyjnego.
+1. Program główny wywołujący procedurę żądanej usługi.
+2. Zbiór procedur usługowych realizujących wywołania systemowe.
+3. Zbiór procedur narzędziowych wspomagających procedury realizujące usługi systemowe.
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plPODROZ. 1.7.
+STRUKTURA SYSTEMÓW OPERACYJNYCH
+89
+W takim modelu dla każdego wywołania systemowego istnieje jedna procedura obsługi, która
+je realizuje. Procedury narzędziowe wykonują działania wymagane przez niektóre procedury
+usługowe — np. pobieranie danych z programów użytkowników. Podział procedur na trzy war-
+stwy pokazano na rysunku 1.21.
+Rysunek 1.21. Prosty model struktury systemu monolitycznego
+Oprócz rdzenia systemu operacyjnego ładowanego podczas rozruchu komputera wiele
+systemów operacyjnych obsługuje ładowalne rozszerzenia, takie jak sterowniki urządzeń wej-
+ścia-wyjścia oraz systemy plików. Komponenty te są ładowane na żądanie. W systemie UNIX
+określa się je jako biblioteki współdzielone (ang. shared libraries). W Windowsie są to tzw. biblioteki
+ładowane dynamicznie (ang. Dynamic-Link Libraries — DLL). Mają rozszerzenie .dll, a w kata-
+logu C:\Windows\system32 w systemach Windows jest ich grubo ponad tysiąc.
+1.7.2. Systemy warstwowe
+Uogólnieniem podejścia z rysunku 1.21 jest zorganizowanie systemu operacyjnego w postaci
+warstw. Każda kolejna warstwa bazuje na poprzedniej. Pierwszym systemem skonstruowanym
+według tej koncepcji był system THE zaprojektowany w Holandii w Technische Hogeschool
+Eindhoven przez Edsgera W. Dijkstrę [Dijkstra, 1968] i jego studentów. System THE był prostym
+systemem wsadowym dla komputera produkcji holenderskiej Electrologica X8, wyposażonego
+w 32 768 27-bitowych słów (w tamtym czasie koszt bitu był bardzo wysoki).
+System składał się z sześciu warstw, co pokazano w tabeli 1.3. Warstwa 0 była odpowie-
+dzialna za przydział procesora oraz przełączanie pomiędzy procesami w momencie przerwań
+lub upływu zadanych parametrów czasowych. Powyżej warstwy 0 system zawierał sekwencyjne
+procesy, z których każdy można było zaprogramować bez konieczności przejmowania się fak-
+tem, że na pojedynczym procesorze działa wiele procesów. Inaczej mówiąc, warstwa 0 zapew-
+niała procesorowi podstawową obsługę wieloprogramowości.
+Warstwa 1 była odpowiedzialna za zarządzanie pamięcią. Jej zadanie to przydzielanie miej-
+sca dla procesów w pamięci głównej oraz w pamięci bębnowej o pojemności 524 288 słów,
+gdzie znajdowały się fragmenty procesów (strony), dla których w pamięci głównej nie znalazło
+się miejsce. Powyżej warstwy 1 procesy nie musiały przejmować się tym, czy znajdowały się
+w pamięci głównej, czy na bębnie. Oprogramowanie warstwy 1 zajmowało się tym, aby strony
+trafiały do pamięci głównej wtedy, kiedy były potrzebne.
+Warstwa 2 obsługiwała komunikację pomiędzy każdym z procesów a konsolą operatora
+(tzn. użytkownikiem). Na bazie tej warstwy każdy proces miał własną konsolę operatorską.
+Warstwa 3 była odpowiedzialna za zarządzanie urządzeniami wejścia-wyjścia oraz buforowanie
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plWPROWADZENIE
+90
+ROZ. 1
+Tabela 1.3. Struktura systemu operacyjnego THE
+Warstwa
+Funkcja
+5Operator
+4Programy użytkownika
+3Zarządzanie wejściem-wyjściem
+2Komunikacja pomiędzy operatorem a procesami
+1Zarządzanie pamięcią główną i bębnową
+0Przydział procesora i wieloprogramowość
+strumieni informacji przepływających pomiędzy nimi. Powyżej warstwy 3 każdy proces mógł
+posługiwać się abstrakcyjnymi urządzeniami wejścia-wyjścia z wygodnymi właściwościami
+zamiast urządzeniami fizycznymi z wieloma osobliwościami. W warstwie 4 działały programy użyt-
+kownika. Programy te nie musiały przejmować się zarządzaniem procesami, pamięcią, konsolą
+czy też operacjami wejścia-wyjścia. Proces operatora systemu był umieszczony w warstwie 5.
+Dalsze uogólnienie koncepcji warstw zastosowano w systemie MULTICS. Zamiast warstw
+użyto w nim pojęcia pierścieni. System był złożony z szeregu koncentrycznych pierścieni.
+Wewnętrzne były bardziej uprzywilejowane od zewnętrznych (co jest równoznaczne ze strukturą
+warstw występującą w systemie THE). Kiedy procedura znajdująca się na zewnętrznym pier-
+ścieniu chciała wywołać procedurę w pierścieniu wewnętrznym, musiała wykonać odpowied-
+nik wywołania systemowego — tzn. instrukcję TRAP. Przed faktyczną realizacją wywołania były
+uważnie sprawdzane jej parametry pod kątem poprawności. Chociaż w systemie MULTICS
+cały system operacyjny był częścią przestrzeni adresowej każdego z procesów użytkownika,
+sprzęt pozwalał na wyznaczanie indywidualnych procedur (właściwie segmentów pamięci) jako
+zabezpieczonych przed czytaniem, zapisywaniem lub uruchamianiem.
+O ile schemat warstw występujący w systemie THE był w rzeczywistości jedynie pomocą
+projektową, ponieważ wszystkie części systemu były ze sobą połączone w pojedynczy program
+wykonywalny, o tyle w systemie MULTICS mechanizm pierścieni występował także w fazie
+działania programu i był wymuszany przez sprzęt. Zaleta mechanizmu pierścieni polega na tym,
+że można go łatwo rozszerzyć na strukturę podsystemów użytkowników; np. profesor może
+napisać program do testowania i oceniania programów studentów i uruchomić go w pierścieniu
+n, natomiast programy studentów działają w pierścieniu n+1, dzięki czemu studenci nie mogą
+zmieniać swoich ocen.
+1.7.3. Mikrojądra
+W systemach o budowie warstwowej, projektanci mogli zdecydować, gdzie należy wykreślić
+granicę jądro – użytkownik. Tradycyjnie wszystkie warstwy były umieszczane w jądrze, ale to
+nie było konieczne. W rzeczywistości można postarać się o to, aby w trybie jądra znalazło się
+jak najmniej funkcji, ponieważ błędy w jądrze mogą przyczynić się do natychmiastowej awarii
+całego systemu. Dla kontrastu procesy użytkownika można skonfigurować tak, by miały mniej-
+sze możliwości. Dzięki temu występujące w nich błędy nie muszą być krytyczne.
+Przeprowadzano wiele badań dotyczących liczby błędów przypadających na 1000 wierszy
+kodu, np. [Basili i Perricone, 1984], [Ostrand i Weyuker, 2002]. Gęstość błędów zależy od roz-
+miaru modułu, jego wieku oraz innych czynników, jednak w systemach przemysłowych przyj-
+muje się wartość 10 błędów na 1000 wierszy kodu. Oznacza to, że w monolitycznym systemie
+operacyjnym składającym się z 5 milionów wierszy kodu może występować około 50 tysięcy
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plPODROZ. 1.7.
+STRUKTURA SYSTEMÓW OPERACYJNYCH
+91
+błędów jądra. Oczywiście nie wszystkie są krytyczne. Niektóre błędy mogą dotyczyć np. wyświe-
+tlania nieprawidłowego komunikatu o błędzie w rzadko występującej sytuacji. Niemniej jednak
+systemy operacyjne są wystarczająco awaryjne, aby producenci komputerów wyposażyli je w przy-
+ciski Reset (często na przednim panelu). Zwróćmy uwagę, że nie zdecydowali się na to produ-
+cenci odbiorników telewizyjnych, zestawów audio czy samochodów, mimo że na tych urządze-
+niach działa wiele oprogramowań.
+Podstawowa idea projektu mikrojądra to dążenie do osiągnięcia wysokiej niezawodności
+poprzez podzielenie systemu operacyjnego na niewielkie, dobrze zdefiniowane moduły, z których
+tylko jeden — mikrojądro — działa w trybie jądra, natomiast pozostałe działają jako zwykłe
+procesy użytkownika o relatywnie małych możliwościach. W szczególności dzięki uruchomie-
+niu każdego sterownika urządzenia i systemu plików jako oddzielnych procesów użytkownika,
+błąd w jednym z nich może doprowadzić do awarii tego komponentu, ale nie jest w stanie dopro-
+wadzić do awarii całego systemu. A zatem błąd w sterowniku dźwięku spowoduje zniekształ-
+cenia dźwięku lub jego zanik, ale nie spowoduje awarii komputera. Dla kontrastu w systemach
+monolitycznych, w których wszystkie sterowniki działają w jądrze, błąd w sterowniku dźwię-
+kowym może spowodować odwołanie do nieprawidłowego adresu w pamięci i doprowadzić do
+natychmiastowego zatrzymania systemu.
+Przez dziesięciolecia zaimplementowano i wdrożono wiele systemów operacyjnych o struk-
+turze mikrojąder ([Accetta et al., 1986], [Haertig et al., 1997], [Heiser et al., 2006], [Herder et al.,
+2006], [Hildebrand, 1992], [Kirsch et al., 2005], [Liedtke, 1993, 1995, 1996], [Pike et al., 1992],
+[Zuberi et al., 1999]). Z wyjątkiem systemu OS X, który bazuje na mikrojądrze Mach [Accetta
+et al., 1986], w popularnych systemach operacyjnych komputerów typu desktop mikrojądra nie
+są używane. Jednakże występują one bardzo często w aplikacjach czasu rzeczywistego, prze-
+myśle, lotnictwie oraz aplikacjach wojskowych o kluczowym znaczeniu i bardzo wysokich wyma-
+ganiach w zakresie niezawodności. Kilka spośród bardziej znanych systemów o strukturze mikro-
+jądra to Integrity, K42, L4, PikeOS, QNX, Symbian i MINIX 3. Poniżej zwięźle opiszemy system
+MINIX 3, w którym do granic możliwości wykorzystano modularność — większą część systemu
+operacyjnego podzielono na szereg niezależnych procesów działających w trybie użytkownika.
+MINIX 3 jest zgodny ze standardem POSIX i dostępny za darmo (razem z kompletnym kodem
+źródłowym) w internecie, pod adresem www.minix3.org ([Giuffrida et al., 2012], [Giuffrida et al.,
+2013], [Herder et al., 2006], [Herder et al., 2009], [Hruby et al., 2013]).
+Mikrojądro systemu MINIX 3 składa się tylko z około 3200 wierszy kodu w języku C oraz
+800 wierszy kodu asemblera. Ten ostatni wykorzystano do implementacji niskopoziomowych
+funkcji, takich jak przechwytywanie przerwań i przełączanie procesów. Kod w języku C wyko-
+rzystano do zarządzania i szeregowania procesów, obsługi komunikacji między procesami (poprzez
+przesyłanie pomiędzy nimi komunikatów). W kodzie tym zaimplementowano również około 40
+wywołań jądra, które umożliwiają wykonywanie zadań pozostałej części systemu operacyjnego.
+Wywołania te realizują takie funkcje jak przypisywanie procedur obsługi do przerwań, przeno-
+szenie danych pomiędzy przestrzeniami adresowymi oraz instalowanie map pamięci dla nowych
+procesów. Strukturę procesów w systemie MINIX 3 pokazano na rysunku 1.22. Procedury obsługi
+wywołań jądra oznaczono etykietą Sys. Sterownik urządzenia dla zegara również znajduje się
+w jądrze, ponieważ mechanizm szeregowania ściśle z nim współpracuje. Wszystkie pozostałe
+sterowniki urządzeń działają jako oddzielne procesy użytkowników.
+Poza jądrem system ma strukturę trzech warstw procesów. Wszystkie one działają w trybie
+użytkownika. Najniższa warstwa zawiera sterowniki urządzeń. Ponieważ działają one w trybie
+użytkownika, nie mają fizycznego dostępu do przestrzeni portów wejścia-wyjścia i nie mogą
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plWPROWADZENIE
+92
+ROZ. 1
+Rysunek 1.22. Uproszczona struktura systemu operacyjnego MINIX 3
+bezpośrednio wydawać poleceń wejścia-wyjścia. Zamiast tego, w celu zaprogramowania urzą-
+dzenia wejścia-wyjścia, sterownik buduje strukturę, w której są zapisane informacje o tym, jakie
+wartości mają być zapisane do poszczególnych portów wejścia-wyjścia, a następnie odwołuje
+się do jądra z żądaniem wykonania operacji zapisu. Takie podejście oznacza, że jądro może
+sprawdzić, czy sterownik zapisuje (lub odczytuje) dane z urządzenia wejścia-wyjścia, z którego
+ma prawo korzystać. W konsekwencji (i w odróżnieniu od projektu monolitycznego) błędnie
+działający sterownik dźwięku nie ma możliwości omyłkowego zapisania danych na dysku.
+Nad sterownikami znajduje się kolejna warstwa trybu użytkownika zawierająca serwery.
+Realizują one większość usług systemu operacyjnego. Jeden serwer plików (lub kilka serwe-
+rów) zarządza systemem plików, menedżer procesów tworzy, niszczy i zarządza procesami itd.
+Programy użytkownika uzyskują dostęp do usług systemu operacyjnego poprzez przesyłanie
+krótkich komunikatów do serwerów z żądaniem wywołań systemowych POSIX; np. proces,
+który chce wykonać operację odczytu, wysyła komunikat do jednego serwerów plików z infor-
+macją o tym, co chce przeczytać.
+Interesującą rolę spełnia serwer reinkarnacji, którego zadaniem jest sprawdzanie, czy inne
+serwery i sterowniki działają prawidłowo. W przypadku wykrycia, że serwer lub sterownik
+działają wadliwie, są one automatycznie zastępowane bez konieczności interwencji użytkownika.
+W ten sposób system realizuje funkcję samonaprawy i może osiągnąć wysoki stopień nieza-
+wodności.
+System podlega wielu restrykcjom, które ograniczają możliwości każdego z procesów. Jak
+wspomniano wcześniej, sterowniki mogą używać tylko autoryzowanych portów wejścia-wyjścia.
+Dostęp do wywołań jądra również jest kontrolowany na poziomie procesu, podobnie jak zdol-
+ność wysyłania komunikatów do innych procesów. Procesy mogą również przydzielać ograni-
+czone uprawnienia dla innych procesów, tak aby jądro mogło uzyskać dostęp do ich przestrzeni
+adresowej; np. system plików może udzielić uprawnienia sterownikowi dysku do zlecenia jądru
+umieszczenia przeczytanego bloku dyskowego pod wskazanym adresem w przestrzeni adre-
+sowej systemu plików. Efekt tych ograniczeń jest taki, że każdy sterownik i serwer ma tylko
+takie uprawnienia, aby wykonać swoją pracę i nic więcej. W ten sposób możliwość zniszczeń,
+jakich może dokonać błędnie działający komponent, jest znacznie ograniczona.
+Ideą w pewnym stopniu powiązaną z minimalnym jądrem jest umieszczenie w jądrze mecha-
+nizmu wykonywania jakiejś operacji, przy czym strategia pozostałaby poza jądrem. Aby lepiej
+wyjaśnić tę tezę, rozważmy szeregowanie procesów. Stosunkowo prosty algorytm szeregowania
+polega na przypisaniu priorytetu do każdego procesu, a następnie na powierzeniu jądru uru-
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plPODROZ. 1.7.
+STRUKTURA SYSTEMÓW OPERACYJNYCH
+93
+chomienia procesu o najwyższym priorytecie. Mechanizm — umieszczony w jądrze — wyszu-
+kuje proces o najwyższym priorytecie i go uruchamia. Strategia — przypisywanie priorytetów
+procesom — może być realizowana przez procesy działające w trybie użytkownika. W ten sposób
+można rozdzielić strategię od mechanizmu, przez co można zmniejszyć rozmiary jądra.
+1.7.4. Model klient-serwer
+Odmianą idei mikrojądra jest rozróżnienie dwóch klas procesów — serwerów, z których każdy
+udostępnia pewne usługi, oraz klientów, które korzystają z tych usług. Model ten jest znany jako
+układ klient-serwer. Często najniższą warstwą jest mikrojądro, ale nie jest to obowiązkowe.
+Sedno tego modelu polega na istnieniu procesów-klientów i procesów-serwerów.
+Komunikacja pomiędzy klientami a serwerami często odbywa się poprzez przekazywanie
+komunikatów. Aby uzyskać usługę, proces-klient tworzy komunikat z informacją o tym, czego
+chce, i przesyła go do odpowiedniej usługi. Usługa wykonuje pracę i przesyła odpowiedź. Jeśli
+klient i serwer działają na tej samej maszynie, możliwe są pewne optymalizacje, ale ogólnie rzecz
+biorąc, są pomiędzy nimi przekazywane komunikaty.
+Oczywistym uogólnieniem tej koncepcji jest uruchomienie klientów i serwerów na różnych
+komputerach połączonych ze sobą lokalną lub rozległą siecią, tak jak pokazano na rysunku 1.23.
+Ponieważ klienty komunikują się z serwerami poprzez przesyłanie komunikatów, klienty nie
+muszą wiedzieć, czy komunikaty są obsługiwane lokalnie na ich własnych maszynach, czy też
+są one przesyłane w sieci do serwerów na zdalnej maszynie. Jeśli chodzi o klienta, w obydwu
+przypadkach zachodzą te same zdarzenia: wysyłane są żądania, a następnie powracają odpo-
+wiedzi. Tak więc model klient-serwer jest abstrakcją, którą można wykorzystać dla pojedyn-
+czej maszyny lub dla sieci.
+Rysunek 1.23. Model klient-serwer w sieci
+Ostatnio rośnie liczba systemów, w których użytkownicy posługują się swoimi domowymi
+komputerami PC jako klientami, natomiast duże maszyny działające w trybie zdalnym speł-
+niają rolę serwerów. W ten sposób działa większość systemów w internecie. Komputer PC
+wysyła żądanie strony WWW do serwera. W odpowiedzi serwer przesyła żądaną stronę. Jest to
+typowe zastosowanie modelu klient-serwer w sieci.
+1.7.5. Maszyny wirtualne
+Pierwsze wersje systemu operacyjnego OS/360 były systemami czysto wsadowymi. Niemniej
+jednak wielu użytkowników systemów 360 oczekiwało możliwości interaktywnej pracy przy
+terminalu. W związku z tym pewne grupy projektantów, zarówno z firmy IBM, jak i z zewnątrz,
+postanowiły napisać system operacyjny z podziałem czasu. Oficjalny system z podziałem czasu
+firmy IBM — TSS/360 — opublikowano z opóźnieniem. Kiedy wreszcie się pojawił, był zbyt
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plWPROWADZENIE
+94
+ROZ. 1
+duży i zbyt wolny. W związku z tym zaledwie kilka ośrodków zdecydowało się na przejście na
+ten system. Ostatecznie wycofano się z tego projektu w momencie, gdy koszty prac nad nim
+pochłonęły około 50 milionów dolarów [Graham, 1970]. Jednak w należącym do IBM ośrodku
+Scientific Center w Cambridge w stanie Massachusetts opracowano zupełnie odmienny sys-
+tem, który firma IBM ostatecznie zaakceptowała jako swój produkt. Liniowy potomek tego
+systemu, znany pod nazwą z/VM, jest obecnie powszechnie używany we współczesnych kompute-
+rach mainframe firmy IBM — maszynach zSeries. Są one używane w wielu dużych ośrodkach
+obliczeniowych, np. w roli serwerów e-commerce obsługujących setki lub tysiące transakcji na
+sekundę i korzystających z baz danych o rozmiarach rzędu milionów gigabajtów.
+VM/370
+System ten, pierwotnie znany jako CP/CMS i później przemianowany na VM/370 [Seawright
+i MacKinnon, 1979], bazował na prostej obserwacji: system z podziałem czasu udostępnia
+(1) funkcje wieloprogramowości oraz (2) rozszerzoną maszynę z wygodniejszym interfejsem
+od tego, który oferuje sprzęt. Sedno systemu VM/370 polega na całkowitym odseparowaniu tych
+dwóch funkcji.
+Serce systemu — monitor maszyny wirtualnej — działa bezpośrednio na sprzęcie i reali-
+zuje funkcję wieloprogramowości, dostarczając do wyższej warstwy (rysunek 1.24) nie jednej,
+ale kilku maszyn wirtualnych. Jednak w odróżnieniu od wszystkich innych systemów opera-
+cyjnych te maszyny wirtualne nie są maszynami rozszerzonymi z plikami i innymi wygodnymi
+mechanizmami. Zamiast tego są to dokładne kopie czystego sprzętu, włącznie z trybami jądra
+i użytkownika, wejściem-wyjściem, przerwaniami i wszystkim, w co jest wyposażona maszyna
+fizyczna.
+Rysunek 1.24. Struktura systemu operacyjnego VM/370 z CMS
+Ponieważ każda maszyna wirtualna jest identyczna z fizycznym sprzętem, na każdej może
+działać dowolny system operacyjny zdolny do działania na maszynie fizycznej. Na różnych maszy-
+nach wirtualnych mogą działać różne systemy operacyjne (i często tak właśnie jest). W orygi-
+nalnym systemie VM/370 na niektórych maszynach wirtualnych działał system OS/360 lub jeden
+z innych dużych wsadowych systemów operacyjnych albo systemów przetwarzania transakcji,
+natomiast na innych działał jednoużytkownikowy, interaktywny system o nazwie CMS (Conver-
+sational Monitor System), przeznaczony do interaktywnej obsługi użytkowników systemów
+z podziałem czasu. Ten drugi system był popularny wśród programistów.
+Kiedy program CMS uruchamiał wywołanie systemowe, było ono przechwytywane przez
+system operacyjny w jego własnej maszynie wirtualnej, a nie przez system VM/370 — tak jakby
+program działał na maszynie fizycznej, a nie wirtualnej. Następnie system CMS wydawał nor-
+malne sprzętowe instrukcje wejścia-wyjścia do czytania dysku wirtualnego lub wykonania innych
+operacji niezbędnych do realizacji wywołania. Te instrukcje wejścia-wyjścia były przechwyty-
+wane przez system VM/370, który następnie wykonywał je jako część symulacji fizycznego
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plPODROZ. 1.7.
+STRUKTURA SYSTEMÓW OPERACYJNYCH
+95
+sprzętu. Dzięki całkowitemu odseparowaniu funkcji wieloprogramowości i udostępnieniu roz-
+szerzonej maszyny każda z części mogła być znacznie prostsza, bardziej elastyczna i o wiele
+łatwiejsza w utrzymaniu.
+Współczesne wcielenie VM/370 — system z/VM — jest zwykle używany raczej do urucha-
+miania wielu kompletnych systemów operacyjnych zamiast okrojonych jednoużytkownikowych
+systemów, takich jak CMS. Komputery zSeries np. są zdolne do uruchomienia jednej lub kilku
+linuksowych maszyn wirtualnych razem z tradycyjnymi systemami IBM.
+Powrót maszyn wirtualnych
+Choć firma IBM posługuje się maszynami wirtualnymi od czterech dziesięcioleci, a kilka innych
+firm, łącznie z Sun Microsystems i Hewlett-Packard, ostatnio dodało obsługę maszyn wirtual-
+nych w swoich serwerach korporacyjnych, idea wirtualizacji do niedawna była w większości
+ignorowana w świecie komputerów PC. Jednak w ciągu ostatnich kilku lat, w związku z powsta-
+niem nowych potrzeb, którym towarzyszyły nowe oprogramowanie i nowe technologie, maszyny
+wirtualne stały się ważną technologią.
+Najpierw potrzeby. W wielu firmach serwery pocztowe, serwery WWW, serwery FTP i inne
+serwery tradycyjnie działały na oddzielnych komputerach, często pod kontrolą różnych syste-
+mów operacyjnych. W tych firmach wirtualizację zaczęto postrzegać jako sposób uruchomienia
+ich wszystkich na tej samej maszynie — bez obaw, że awaria jednego serwera spowoduje awarię
+reszty,
+Wirtualizacja jest również popularna w świecie hostingu WWW. Bez niej klienci hostingu
+webowego są zmuszeni do wybierania pomiędzy współdzielonym hostingiem (otrzymują tylko
+konto logowania na serwerze WWW, ale nie mają kontroli nad oprogramowaniem serwera)
+a hostingiem dedykowanym (otrzymują własną maszynę, która jest bardzo elastyczna, ale w przy-
+padku średnich i małych ośrodków WWW koszty takiego rozwiązania są niewspółmiernie wyso-
+kie). Kiedy firma hostingowa oferuje do wynajęcia maszyny wirtualne, na pojedynczej maszy-
+nie fizycznej może działać wiele maszyn wirtualnych, a każda z nich zachowuje się tak, jakby
+była maszyną fizyczną. Klienci, którzy wynajmą maszynę wirtualną, mogą korzystać z takiego
+systemu operacyjnego i oprogramowania, z jakiego chcą, za część kosztów dedykowanego
+serwera (ponieważ ta sama maszyna fizyczna w tym samym czasie obsługuje wiele maszyn
+wirtualnych).
+Wirtualizacja znajduje również zastosowanie wśród użytkowników, którzy jednocześnie chcą
+korzystać z dwóch lub większej liczby systemów operacyjnych — np. z Windowsa i Linuksa —
+ponieważ niektóre z ich ulubionych pakietów aplikacji działają w jednym systemie, natomiast
+inne — w drugim. Sytuację tę zilustrowano na rysunku 1.25(a), na którym odzwierciedlono
+proces przemianowania w ostatnich latach pojęcia „monitor maszyny wirtualnej” na hipernad-
+zorca typu 1. Termin ten jest dziś powszechnie używany ze względu na to, że nazwa „monitor
+maszyny wirtualnej” wymaga wciśnięcia większej liczby klawiszy, niż wynosi akceptowana dziś
+norma. Należy jednak zwrócić uwagę, że wielu autorów używa tych określeń zamiennie.
+Teraz oprogramowanie. Chociaż nikt nie podawał w wątpliwość atrakcyjności maszyn
+wirtualnych, problemem była implementacja. Aby w komputerze mogło działać oprogramowa-
+nie maszyny wirtualnej, jego procesor musi obsługiwać wirtualizację [Popek i Goldberg, 1974].
+Oto jak w skrócie wygląda ten problem. Kiedy system operacyjny działający na maszynie wir-
+tualnej (w trybie użytkownika) uruchamia uprzywilejowaną instrukcję, np. modyfikuje rejestr
+PSW lub wykonuje operację wejścia-wyjścia, istotne znaczenie ma to, aby sprzęt przechwycił
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plWPROWADZENIE
+96
+ROZ. 1
+Rysunek 1.25. (a) Hipernadzorca typu 1; (b) czysty hipernadzorca typu 2; (c) hipernadzorca typu 2
+w praktyce
+monitor maszyny wirtualnej, tak by instrukcje mogły być emulowane programowo. W niektó-
+rych procesorach — w tym w procesorze Pentium, jego poprzednikach i klonach — próby
+uruchamiania uprzywilejowanych instrukcji w trybie użytkownika są ignorowane. W związku
+z tą cechą uruchamianie maszyn wirtualnych na tym sprzęcie było niemożliwe, co wyjaśnia brak
+zainteresowania wirtualizacją w świecie komputerów x86. Oczywiście były interpretery dla
+procesora Pentium działające w systemach Pentium (np. Bochs), ale z powodu obniżonej wydaj-
+ności nie nadawały się do poważnej pracy.
+Ta sytuacja zmieniła się w efekcie kilku akademickich projektów badawczych prowadzo-
+nych w latach dziewięćdziesiątych; w szczególności znaczące efekty przyniósł projekt Disco
+prowadzony na Uniwersytecie Stanforda [Bugnion et al., 1997], a także projekt Xen prowadzony
+na Uniwersytecie Cambridge [Barham et al., 2003]. Doprowadziły one do powstania produktów
+komercyjnych (np. VMware Workstation i Xen) oraz odrodzenia się zainteresowania maszy-
+nami wirtualnymi. Oprócz systemów VMware i Xen popularnymi systemami typu hipernadzorca
+są dziś KVM (dla jądra Linux), VirtualBox (firmy Oracle) oraz Hyper-V (firmy Microsoft).
+W wyniku przeprowadzenia niektórych spośród tych wczesnych projektów badawczych
+poprawiła się wydajność takich interpreterów jak Bochs. Poprawę osiągnięto dzięki tłumacze-
+niu bloków kodu „w locie”, zapisywaniu ich w wewnętrznej pamięci podręcznej, a następnie
+ponownym ich wykorzystywaniu, w przypadku gdy były ponownie uruchamiane. Poprawa wydaj-
+ności była na tyle znacząca, że powstały tzw. symulatory maszyn (rysunek 1.25(b)). Chociaż zasto-
+sowanie tej techniki (znanej jako tłumaczenie binarne — ang. binary translation) poprawiło
+sytuację, to uzyskane w ten sposób systemy, choć były wystarczająco dobre, by publikować
+dokumenty na ich temat na konferencjach naukowych, wciąż nie działały na tyle szybko, aby
+korzystać z nich w środowiskach komercyjnych, w których wydajność odgrywa kluczową rolę.
+Kolejnym krokiem na drodze do poprawy wydajności było dodanie modułu jądra, którego
+zadaniem było wykonanie „zgrubnego liftingu”; jego miejsce zaprezentowano na rysunku 1.25(c).
+W praktyce wszystkie współcześnie dostępne na rynku systemy typu hipernadzorca, takie jak
+VMware Workstation, korzystają z opisanej strategii hybrydowej (a także z wielu innych ulepszeń).
+Wszyscy nazywają je hipernadzorcami typu 2, dlatego (z pewną niechęcią) również będziemy
+używać tej nazwy w dalszej części książki. Wolelibyśmy nazywać je hipernadzorcami typu 1.7,
+ponieważ ta nazwa odzwierciedla fakt, że nie są one w pełni programami trybu użytkownika.
+Szczegółowy opis działania systemu VMware Workstation oraz jego części zamieszczono
+w rozdziale 7.
+W praktyce prawdziwą różnicę pomiędzy hipernadzorcą typu 1 a hipernadzorcą typu 2 jest
+to, że hipernadzorca typu 2 do tworzenia procesów, zapisywania plików itp. wykorzystuje sys-
+tem operacyjny gospodarza i jego system plików. Hipernadzorca typu 1 nie ma takiego wsparcia
+i wszystkie te operacje musi realizować samodzielnie.
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plPODROZ. 1.7.
+STRUKTURA SYSTEMÓW OPERACYJNYCH
+97
+Po uruchomieniu hipernadzorca typu 2 czyta instalacyjną płytę CD-ROM (lub obraz płyty)
+wybranego systemu operacyjnego-gościa i instaluje wirtualny dysk, który jest po prostu dużym
+plikiem w systemie plików systemu operacyjnego gospodarza. Hipernadzorca typu 1 nie może
+tego zrobić, ponieważ nie ma dostępu do systemu operacyjnego gospodarza, gdzie mógłby
+przechowywać pliki. Musi samodzielnie zarządzać własną pamięcią masową na surowej party-
+cji dyskowej.
+Podczas rozruchu system operacyjny gościa wykonuje te same czynności, które wykonuje
+fizyczny sprzęt, zwykle uruchamia pewne procesy tła, a następnie interfejs GUI. Z punktu widze-
+nia użytkownika system operacyjny gościa zachowuje się tak samo, jakby działał na maszynie
+fizycznej, mimo że w tym przypadku tak nie jest.
+Innym sposobem postępowania z instrukcjami sterującymi jest zmodyfikowanie systemu ope-
+racyjnego w taki sposób, by były usuwane. Takie podejście nie jest rzeczywistą wirtualizacją,
+ale parawirtualizacją. Wirtualizację opiszemy bardziej szczegółowo w rozdziale 7.
+Maszyna wirtualna Javy
+Innym obszarem, w którym wykorzystuje się maszyny wirtualne, choć w nieco odmienny sposób,
+jest uruchamianie programów Javy. Kiedy firma Sun Microsystems opracowała język progra-
+mowania Java, w tym samym czasie opracowała również maszynę wirtualną (tzn. architekturę
+komputera) znaną jako JVM (Java Virtual Machine). Kompilator Javy generuje kod dla maszyny
+JVM, która następnie jest uruchamiana przez programowy interpreter JVM. Dzięki takiemu
+podejściu można przesyłać kod JVM przez internet do dowolnego komputera wyposażonego
+w interpreter JVM i tam go uruchamiać. Gdyby kompilator tworzył binarne programy, np. dla
+Pentium lub SPARC, nie można by było równie łatwo przesyłać ich i uruchamiać w dowolnym
+miejscu (oczywiście firma Sun mogła wyprodukować kompilator tworzący binaria SPARC,
+a następnie rozprowadzić interpreter SPARC, ale JVM jest znacznie prostszą architekturą do
+interpretacji). Inna zaleta stosowania JVM polega na tym, że jeśli interpreter zostanie właściwie
+zaimplementowany, co nie jest całkowicie trywialne, to wchodzące programy JVM można spraw-
+dzać pod kątem bezpieczeństwa, a następnie uruchamiać w środowisku chronionym, tak aby nie
+mogły wykradać danych lub wyrządzać szkód w systemie gospodarza.
+1.7.6. Egzojądra
+Zamiast klonować maszynę fizyczną, tak jak to się robi w przypadku maszyn wirtualnych, można
+zastosować inną strategię — jej podział — czyli mówiąc inaczej, przydzielić każdemu użyt-
+kownikowi podzbiór zasobów. W ten sposób jedna maszyna wirtualna może uzyskać bloki dysku
+od 0 do 1023, następna bloki od 1024 do 2047 itd.
+W najniższej warstwie, która działa w trybie jądra, jest program znany jako egzojądro [Engler
+et al., 1995]. Jego zadaniem jest przydział zasobów do maszyn wirtualnych, a następnie czuwanie
+nad ich właściwym używaniem, tak by żadna z maszyn wirtualnych nie mogła używać zasobów,
+które do niej nie należą. Na każdej maszynie wirtualnej poziomu użytkownika może działać
+osobny system operacyjny, tak jak w systemie VM/370 oraz w wirtualnych maszynach 8086
+w systemie Pentium, z tą różnicą, że każda z nich może używać tylko tych zasobów, które zostały
+jej przydzielone.
+Zaletą struktury egzojądra jest to, że nie wymaga ona stosowania warstwy mapowania.
+W innych architekturach każda maszyna wirtualna zachowuje się tak, jakby miała własny dysk,
+z blokami od zera do pewnego maksimum. W związku z tym monitor maszyny wirtualnej musi
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plWPROWADZENIE
+98
+ROZ. 1
+utrzymywać tabele do mapowania adresów dyskowych (oraz wszystkich innych zasobów).
+W przypadku egzojądra to mapowanie nie jest konieczne. Egzojądro musi jedynie śledzić, do której
+maszyny wirtualnej przypisano poszczególne zasoby. Metoda ta w dalszym ciągu oddziela obsługę
+wieloprogramowości (w egzojądrze) od kodu systemu operacyjnego użytkownika (w przestrzeni
+użytkownika), ale przy znacznie mniejszych kosztach, ponieważ jedynym zadaniem egzojądra
+jest dbanie o to, aby poszczególne maszyny wirtualne wzajemnie „nie wyrywały sobie włosów”.
+1.8. ŚWIAT WEDŁUG JĘZYKA C
+1.8.
+ŚWIAT WEDŁUG JĘZYKA C
+Systemy operacyjne zwykle są dużymi programami napisanymi w C (lub czasami w C++),
+składającymi się z wielu fragmentów tworzonych przez wielu programistów. Środowisko uży-
+wane do projektowania systemów operacyjnych bardziej się różni od tego, do jakiego są przyzwy-
+czajeni indywidualni programiści (np. studenci) piszący niewielkie programy w Javie. W tym
+podrozdziale podjęto próbę zwięzłego wprowadzenia w świat pisania systemów operacyjnych
+z myślą o programistach piszących proste programy w Javie lub Pythonie.
+1.8.1. Język C
+Niniejszy punkt nie jest przewodnikiem po języku C, ale krótkim zestawieniem najważniej-
+szych różnic pomiędzy nim a takimi językami jak Python oraz przede wszystkim Java. Java bazuje
+na języku C, zatem pomiędzy tymi dwoma językami jest wiele podobieństw. Python jest nieco
+inny, ale wciąż dość podobny. Dla wygody skoncentrujemy się na Javie. Java, Python i C są języ-
+kami imperatywnymi, w których występują typy danych, zmienne i instrukcje sterujące. Ele-
+mentarne typy danych występujące w języku C to liczby całkowite (integer) — w tym krótkie
+(short) i długie (long) — znaki (char) oraz liczby zmiennoprzecinkowe (float). Można również
+tworzyć złożone typy danych za pomocą tablic, struktur i unii. Instrukcje sterujące w języku C
+są podobne do tych w Javie. Dostępne są instrukcje if, switch, for i while. Funkcje i parametry
+są w przybliżeniu takie same w obydwu językach.
+Jedną z własności, które występują w języku C, ale nie występują w Javie i Pythonie, są
+jawne wskaźniki. Wskaźnik jest zmienną, która wskazuje (tzn. zawiera adres) zmienną lub struk-
+turę danych. Przeanalizujmy poniższe instrukcje:
+char c1, c2, *p;
+c1 = ’x’;
+p = &c1;
+c2 = *p;
+Instrukcje te deklarują zmienne c1 i c2 jako zmienne znakowe oraz p jako zmienną wskazującą
+na znak (tzn. zawierającą jego adres). Pierwsza operacja przypisania powoduje zapisanie kodu
+ASCII znaku c w zmiennej c1. Druga przypisuje adres zmiennej c1 do zmiennej wskaźnikowej p.
+Trzecia przypisuje zawartość zmiennej wskazywanej przez p do zmiennej c2. Tak więc po wyko-
+naniu tych instrukcji zmienna c2 także zawiera kod ASCII litery c. Teoretycznie wskaźniki
+mają przypisane typy, zatem nie powinno się przypisywać adresu liczby zmiennoprzecinkowej
+do wskaźnika zmiennej znakowej, ale w praktyce kompilatory akceptują takie przypisania, choć
+czasami generują przy tym ostrzeżenie. Wskaźniki są konstrukcją, która ma bardzo duże możli-
+wości, ale która może stać się źródłem błędów w przypadku nieostrożnego posługiwania się nimi.
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plPODROZ. 1.8.
+ŚWIAT WEDŁUG JĘZYKA C
+99
+Do elementów, których nie ma w języku C, można zaliczyć wbudowane ciągi znaków, wątki,
+pakiety, klasy obiekty, bezpieczeństwo typów oraz tzw. „odzyskiwanie pamięci” (ang. garbage
+collection). Ten ostatni mechanizm w kontekście systemów operacyjnych zasługuje na szcze-
+gólną uwagę. Cała pamięć w języku C albo jest statyczna, albo jest jawnie przydzielana i zwal-
+niana przez programistę — zazwyczaj za pomocą funkcji malloc i free. To właśnie całkowita
+kontrola programisty nad pamięcią w połączeniu z jawnymi wskaźnikami powoduje, że język C
+jest atrakcyjnym narzędziem pisania systemów operacyjnych. Systemy operacyjne, nawet te
+ogólnego przeznaczenia, są do pewnego stopnia systemami czasu rzeczywistego. Kiedy zacho-
+dzi przerwanie, system operacyjny ma zaledwie kilka mikrosekund na wykonanie pewnych
+działań. Jeśli tego nie zrobi, straci kluczowe informacje. Zezwolenie na to, aby mechanizm odśmie-
+cania zaczynał działać w dowolnym momencie, jest niedopuszczalne.
+1.8.2. Pliki nagłówkowe
+Projekt systemu operacyjnego, ogólnie rzecz biorąc, obejmuje kilka katalogów. Każdy z nich
+zawiera wiele plików .c z kodem różnych części systemu oraz po kilka plików nagłówkowych .h
+zawierających deklaracje i definicje wykorzystywane przez jeden lub kilka plików kodu. Pliki
+nagłówkowe mogą również zawierać proste makra, np.:
+#define ROZMIAR_BUFORA 4096
+umożliwiające programistom nadawanie nazw stałym. Dzięki temu, jeśli w kodzie zostanie
+użyta nazwa ROZMIAR_BUFORA, będzie ona zastąpiona podczas kompilacji wartością 4096. Dobrą
+praktyką programowania w języku C jest nadawanie nazw wszystkim stałym, poza 0, 1 i −1.
+Czasami nazwy są nadawane także tym wartościom. Makra mogą mieć parametry, np.:
+#define max(a, b) (a > b ? a : b)
+Dzięki nim, jeśli programista zapisze instrukcję:
+i = max(j, k+1)
+to otrzyma:
+i = (j > k+1 ? j : k+1)
+W ten sposób w zmiennej i będzie zapisana większa z wartości j i k+1, np.:
+#ifdef PENTIUM
+intel_int_ack();
+#endif
+Powyższy kod kompiluje się do wywołania funkcji intel_int_ack, jeśli zdefiniowano makro
+PENTIUM. Jeżeli tego makra nie zdefiniowano, jest zastępowany pustą instrukcją. Kompilację
+warunkową często wykorzystuje się w celu wyizolowania kodu zależnego od architektury.
+W ten sposób określony kod wstawia się tylko wtedy, gdy system jest kompilowany w kompute-
+rze Pentium, inny — gdy kompilujemy system w architekturze SPARC itd. Do pliku .c można
+włączać pliki nagłówkowe za pomocą dyrektywy #include. Istnieje również wiele plików nagłów-
+kowych wspólnych prawie dla wszystkich plików .c. Są one zapisane w centralnym katalogu.
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.pl100
+WPROWADZENIE
+ROZ. 1
+1.8.3. Duże projekty programistyczne
+W celu zbudowania systemu operacyjnego każdy plik .c jest kompilowany przez kompilator
+języka C do postaci pliku obiektowego. Pliki obiektowe (z rozszerzeniem .o) zawierają instruk-
+cje binarne dla docelowej maszyny. Są one później uruchamiane bezpośrednio przez procesor.
+W świecie języka C nie istnieje coś takiego jak kod bajtowy Javy lub kod bajtowy Pythona.
+Pierwszy przebieg kompilatora języka C to tzw. preprocesor C. Preprocesor czyta wszystkie
+pliki .c i za każdym razem, gdy napotka dyrektywę #include, pobiera występujący w niej plik
+nagłówkowy i go przetwarza. Czynność ta polega na rozwinięciu makr, wykonaniu warunkowej
+kompilacji (a także kilku innych operacji) oraz przekazaniu wyników do następnego przebiegu
+kompilatora.
+Ponieważ systemy operacyjne są bardzo dużymi programami (5 milionów wierszy kodu to
+nic nadzwyczajnego), konieczność rekompilacji całego kodu za każdym razem, gdy zmieni się
+jakiś plik, byłaby nie do zaakceptowania. Z drugiej strony zmiana kluczowego pliku nagłówko-
+wego, który jest włączany w tysiącach innych plików, wymaga ponownej kompilacji tych plików.
+Śledzenie tego, jakie pliki obiektowe i od jakich plików nagłówkowych zależą, bez wykorzysta-
+nia odpowiednich narzędzi byłoby całkowicie niewykonalne.
+Na szczęście komputery bardzo dobrze sprawdzają się w wykonywaniu dokładnie tego rodzaju
+operacji. W systemach UNIX jest dostępny program o nazwie make (istnieje wiele jego odmian
+różniących się nazwami, np. gmake, pmake), czytający plik Makefile I zawierający informacje o tym,
+które pliki zależą od których. Rolą programu make jest sprawdzenie, jakie pliki obiektowe są
+potrzebne do skompilowania binariów systemu operacyjnego. Dla każdego z plików obiekto-
+wych program ten sprawdza, czy dowolny z plików zależnych (zarówno zawierających kod, jak
+i nagłówkowych) został zmodyfikowany w czasie od ostatniego utworzenia pliku obiektowego.
+Jeśli tak było, ten plik obiektowy musi być ponownie skompilowany. Kiedy program make określi,
+jakie pliki .c trzeba skompilować, wywołuje kompilator języka C w celu ich kompilacji. Tym samym
+liczba kompilacji jest zminimalizowana do niezbędnego minimum. Tworzenie pliku Makefile
+w dużych projektach stwarza znaczne ryzyko popełnienia błędów, dlatego istnieją narzędzia,
+które wykonują tę czynność automatycznie.
+Kiedy wszystkie pliki .o są gotowe, zostają przekazane do programu konsolidującego —
+tzw. linkera, który łączy je w pojedynczy, binarny plik wykonywalny. W tym momencie są
+również włączane wszystkie wywoływane funkcje biblioteczne, rozwiązane zostają odwołania
+między funkcjami oraz następuje w miarę potrzeb relokacja adresów maszynowych. Po zakoń-
+czeniu działania linkera powstaje program wykonywalny, który w systemach uniksowych tra-
+dycyjnie jest zapisany w pliku a.out. Różne komponenty tego procesu dla programu złożonego
+z trzech plików w języku C i dwóch plików nagłówkowych zilustrowano na rysunku 1.26. Chociaż
+w tym punkcie omawiamy tworzenie systemów operacyjnych, wszystkie zawarte tu informacje
+w równym stopniu dotyczą dowolnego dużego programu.
+1.8.4. Model fazy działania
+Po skonsolidowaniu binariów systemu operacyjnego można zrestartować komputer i uruchomić
+nowy system operacyjny. W czasie działania może on dynamicznie ładować fragmenty, które nie
+były włączone w binaria w sposób statyczny, np. sterowniki urządzeń i systemy plików. W fazie
+działania system operacyjny może się składać z wielu segmentów — przeznaczonych na tekst
+(kod programu), dane oraz stos. Segment tekstu normalnie jest niezmienny — nie zmienia się
+podczas działania programu. Segment danych rozpoczyna się od określonego rozmiaru i jest
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plPODROZ. 1.9.
+BADANIA DOTYCZĄCE SYSTEMÓW OPERACYJNYCH
+101
+Rysunek 1.26. Proces kompilacji języka C i plików nagłówkowych w celu utworzenia pliku
+wykonywalnego
+inicjowany określonymi wartościami, ale może się zmienić, a jego rozmiary w miarę potrzeb
+mogą wzrosnąć. Stos początkowo jest pusty, ale rozrasta się i kurczy, w miarę jak są wywoły-
+wane funkcje, a następnie sterowanie powraca do procesu wywołującego. Często segment tekstu
+zostaje umieszczony w pobliżu dolnej części pamięci, segment danych znajduje się bezpośred-
+nio powyżej z możliwością rozrastania się w górę, a segment stosu jest umieszczony pod wy-
+sokimi adresami wirtualnymi z możliwością rozrastania się w dół. Jest to jednak tylko przykła-
+dowa konfiguracja, a różne systemy działają w różny sposób.
+We wszystkich przypadkach kod systemu operacyjnego jest bezpośrednio wykonywany przez
+sprzęt. Nie ma interpretera ani dynamicznej kompilacji, tak jak w Javie.
+1.9. BADANIA DOTYCZĄCE SYSTEMÓW OPERACYJNYCH
+1.9.
+BADANIA DOTYCZĄCE SYSTEMÓW OPERACYJNYCH
+Informatyka jest dynamicznie rozwijającą się dziedziną. Trudno przewidzieć, dokąd zmierza.
+Naukowcy na uniwersytetach i w przemysłowych laboratoriach badawczych przez cały czas
+opracowują nowe pomysły. Z niektórych nic nie wynika, ale inne stanowią podwaliny przyszłych
+produktów i mają olbrzymi wpływ na branżę i użytkowników. Rozróżnienie jednych od drugich
+jest łatwiejsze po fakcie niż w czasie rzeczywistym. Oddzielenie ziarna od plew okazuje się
+szczególnie trudne, ponieważ rozwinięcie niektórych pomysłów często zajmuje nawet 20 – 30 lat.
+Kiedy np. prezydent Eisenhower powołał w 1958 roku agencję ARPA (Advanced Research
+Projects Agency), chciał nie dopuścić do zrujnowania marynarki wojennej i lotnictwa z powodu sum,
+jakie Pentagon wydawał na prace badawcze. Nie miał na celu wynajdywania internetu. Jednak
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plWPROWADZENIE
+102
+ROZ. 1
+jednym z przedsięwzięć, które zrealizowała agencja ARPA, było sfinansowanie kilku uniwer-
+sytetom badań dotyczących wtedy bardzo mglistego pojęcia przełączania pakietów. W rezulta-
+cie powstała pierwsza, eksperymentalna sieć z przełączaniem pakietów — ARPANET. Sieć
+ARPANET zaczęła działać w 1969 roku. Nie minęło zbyt wiele czasu, a do sieci ARPANET przy-
+łączono inne sieci badawcze finansowane przez agencję ARPA i tak narodził się Internet. Przez
+następnych 20 lat był on używany przez naukowców akademickich do przesyłania do siebie
+wiadomości e-mail. W początkach lat dziewięćdziesiątych Tim Berners-Lee z laboratorium CERN
+w Genewie opracował sieć WWW, a Marc Andreesen z Uniwersytetu w Illinois napisał dla niej
+graficzną przeglądarkę. Nagle Internet zapełnił się gawędzącymi ze sobą nastolatkami. Prezy-
+dent Eisenhower prawdopodobnie przewraca się w grobie.
+Badania związane z systemami operacyjnymi doprowadziły również do dramatycznych zmian
+w praktycznych systemach. Jak powiedzieliśmy wcześniej, wszystkie pierwsze komercyjne
+systemy komputerowe stanowiły systemy wsadowe. Było tak aż do chwili wynalezienia w MIT
+w początkach lat sześćdziesiątych interaktywnych systemów z podziałem czasu. Komputery
+były tekstowe, aż do chwili, kiedy Doug Engelbart wynalazł mysz i graficzny interfejs użytkow-
+nika w Stanford Research Institute w końcu lat sześćdziesiątych. Kto wie, co wydarzy się dalej?
+W tym podrozdziale oraz w podobnych do niego częściach niniejszej książki będziemy się
+przyglądać niektórym badaniom związanym z systemami operacyjnymi, które miały miejsce
+w ciągu ostatnich 5 – 10 lat. W ten sposób uzyskamy obraz tego, co może pojawić się na hory-
+zoncie. To wprowadzenie nie jest oczywiście wyczerpujące i bazuje przede wszystkich na arty-
+kułach opublikowanych w najważniejszych magazynach i na konferencjach. To dlatego, że pomysły
+te, aby mogły zostać opublikowane, musiały co najmniej przejść przez rygorystyczny proces
+korekty. Zwróćmy uwagę, że w branży komputerowej — inaczej niż w innych dziedzinach nauko-
+wych — większość badań jest publikowana na konferencjach, a nie w czasopismach. Znaczna
+część artykułów cytowanych w podrozdziałach poświęconych badaniom została opublikowana
+przez instytucje ACM, IEEE Computer Society lub USENIX. Są one dostępne przez internet dla
+członków tych organizacji (studentów). Więcej informacji na temat wymienionych instytucji
+i ich cyfrowych bibliotek można znaleźć pod adresami:
+ACM
+IEEE
+USENIX
+http://www.acm.org/
+Computer Society http://www.computer.org/
+http://www.usenix.org/
+Niemal wszyscy naukowcy zajmujący się systemami operacyjnymi zdają sobie sprawę z tego,
+że współczesne systemy operacyjne są rozbudowane, nieelastyczne, zawodne, niezabezpie-
+czone i roją się od błędów — przy czym niektóre w większym stopniu niż pozostałe (nazwy
+usunięto, aby zapobiec oskarżeniom). W konsekwencji istnieje wiele poglądów na to, jak zbudo-
+wać lepsze systemy operacyjne. Niedawno opublikowano prace dotyczące m.in. takich tematów
+jak: błędy i debugowanie ([Renzelmann et al., 2012], [Zhou et al., 2012]), odtwarzanie po awarii
+([Correia et al., 2012], [Ma et al., 2013], [Ongaro et al., 2011], [Yeh i Cheng, 2012]), zarządzanie
+energią ([Pathak et al., 2012], [Petrucci i Loques, 2012], [Shen et al., 2013]), systemy plików
+i pamięć masowa ([Elnably i Wang, 2012], [Nightingale et al., 2012], [Zhang et al., 2013a]), wysoka
+wydajność operacji wejścia-wyjścia ([de Bruijn et al., 2011], [Li et al., 2013a], [Rizzo, 2012]),
+hiperwątkowość i wielowątkowość ([Liu et al., 2011]), aktualizacja „na żywo” ([Giuffrida et al.,
+2013]), zarządzanie układami GPU ([Rossbach et al., 2011]), zarządzanie pamięcią ([Jantz et
+al., 2013], [Jeong et al., 2013]), wielordzeniowe systemy operacyjne ([Baumann et al., 2009],
+[Kapritsos, 2012], [Lachaize et al., 2012], [Wentzlaff et al., 2012]), poprawność systemów opera-
+cyjnych ([Elphinstone et al., 2007], [Yang et al., 2006], [Klein et al., 2009]), niezawodność syste-
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plPODROZ. 1.10.
+PLAN POZOSTAŁEJ CZĘŚCI KSIĄŻKI
+103
+mów operacyjnych ([Hruby et al., 2012], [Ryzhyk et al., 2009, 2011], [Zheng et al., 2012]), pry-
+watność i zabezpieczenia ([Dunn et al., 2012], [Giuffrida et al., 2012], [Li et al., 2013b], [Lorch
+et al., 2013], [Ortolani i Crispo, 2012], [Slowinska et al., 2012], [Ur et al., 2012]), monitorowanie
+użycia i wydajności ([Harter et al., 2012], [Ravindranath et al., 2012]), wirtualizacja ([Agesen
+et al., 2012], [Ben-Yehuda et al., 2010], [Colp et al., 2011], [Dai et al., 2013], [Tarasov et al.,
+2013], [Williams et al., 2012]).

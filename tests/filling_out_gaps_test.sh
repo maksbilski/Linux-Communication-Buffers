@@ -1,0 +1,37 @@
+#!/bin/sh
+
+# Filling out gaps
+
+PROGRAM_NAME="../file_system"
+FILE_SYSTEM_BINARY_NAME="../file_system.bin"
+
+$PROGRAM_NAME init $FILE_SYSTEM_BINARY_NAME
+
+$PROGRAM_NAME copy_to_disk $FILE_SYSTEM_BINARY_NAME test_file_1.txt
+$PROGRAM_NAME copy_to_disk $FILE_SYSTEM_BINARY_NAME test_file_2.txt
+$PROGRAM_NAME copy_to_disk $FILE_SYSTEM_BINARY_NAME test_file_3.txt
+
+$PROGRAM_NAME list $FILE_SYSTEM_BINARY_NAME
+$PROGRAM_NAME show_usage $FILE_SYSTEM_BINARY_NAME
+
+for i in 1 2 3
+do
+  $PROGRAM_NAME delete $FILE_SYSTEM_BINARY_NAME "test_file_${i}.txt"
+
+  $PROGRAM_NAME list $FILE_SYSTEM_BINARY_NAME
+  $PROGRAM_NAME show_usage $FILE_SYSTEM_BINARY_NAME
+
+  $PROGRAM_NAME copy_to_disk $FILE_SYSTEM_BINARY_NAME "test_file_${i}.txt"
+
+  $PROGRAM_NAME list $FILE_SYSTEM_BINARY_NAME
+  $PROGRAM_NAME show_usage $FILE_SYSTEM_BINARY_NAME
+done
+
+
+for i in 1 2 3
+do
+  $PROGRAM_NAME delete $FILE_SYSTEM_BINARY_NAME "test_file_${i}.txt"
+done
+
+$PROGRAM_NAME list $FILE_SYSTEM_BINARY_NAME
+$PROGRAM_NAME show_usage $FILE_SYSTEM_BINARY_NAME

@@ -1,0 +1,877 @@
+1.4.8. Systemy operacyjne czasu rzeczywistego
+Innym przykładem systemów operacyjnych są systemy czasu rzeczywistego. Ich główną cechą
+jest to, że czas odgrywa w nich kluczową rolę. I tak w systemach sterowania procesami prze-
+mysłowymi komputery w czasie rzeczywistym muszą pobierać dane na temat procesu produkcji
+i używać ich do sterowania maszynami w fabryce. Często są określone ścisłe terminy, których
+należy dotrzymać. Jeśli np. samochód schodzi z taśmy montażowej, w określonych odcinkach
+czasu muszą być wykonane określone działania. Jeśli robot spawalniczy wykona spawanie za
+wcześnie lub za późno, samochód ulegnie zniszczeniu. Jeśli operacja musi bezwzględnie być
+wykonana w określonym momencie (lub w określonym przedziale), mamy do czynienia z twar-
+dym systemem czasu rzeczywistego. Wiele takich systemów można znaleźć w procesach kontroli
+produkcji, lotnictwie, wojsku oraz podobnych zastosowaniach. Systemy te muszą dawać całko-
+witą gwarancję, że określone działania odbędą się w określonym czasie.
+Miękkie systemy czasu rzeczywistego to takie, w których niedotrzymanie jakiegoś terminu,
+choć niepożądane, jest dopuszczalne i nie powoduje poważnych strat. Do tej kategorii należą
+systemy cyfrowego dźwięku oraz systemy multimedialne. Miękkimi systemami czasu rzeczy-
+wistego są również smartfony.
+Ponieważ ścisłe dotrzymywanie terminów ma kluczowe znaczenie w systemach czasu rze-
+czywistego, niekiedy system operacyjny jest jedynie biblioteką połączoną z programami aplika-
+cyjnymi. Wszystko jest ściśle ze sobą połączone i nie ma potrzeby zabezpieczeń pomiędzy
+częściami systemu. Przykładem systemu czasu rzeczywistego tego rodzaju jest e-Cos.
+Kategorie systemów operacyjnych komputerów PDA, systemów wbudowanych i czasu
+rzeczywistego w znacznym stopniu nakładają się na siebie. Niemal wszystkie one mają co naj-
+mniej pewne cechy miękkich systemów czasu rzeczywistego. W systemach wbudowanych i sys-
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plPODROZ. 1.5.
+POJĘCIA DOTYCZĄCE SYSTEMÓW OPERACYJNYCH
+65
+temach czasu rzeczywistego działa tylko oprogramowanie zainstalowane przez projektantów
+systemu. Użytkownicy nie mogą dodawać własnych programów. Dzięki temu zabezpieczanie
+takich systemów jest łatwiejsze. Systemy operacyjne komputerów PDA i systemy wbudowane
+są przeznaczone dla klientów indywidualnych, natomiast systemy czasu rzeczywistego czę-
+ściej wykorzystuje się w przemyśle. Niemniej jednak mają one pewne cechy wspólne.
+1.4.9. Systemy operacyjne kart elektronicznych
+Najmniejsze systemy operacyjne działają na kartach elektronicznych (nazywanych także chipo-
+wymi) — urządzeniach rozmiaru karty kredytowej wyposażonych w układ procesora CPU.
+Systemy te charakteryzują się bardzo surowymi ograniczeniami dotyczącymi mocy oblicze-
+niowej i pamięci. Niektóre są zasilane za pomocą styków w czytniku, do którego wkłada się
+kartę, natomiast bezkontaktowe karty chipowe są zasilane indukcyjnie, co znacznie ogranicza
+ich możliwości. Niektóre karty obsługują tylko jedną funkcję — np. realizację płatności elek-
+tronicznej — natomiast inne obsługują wiele funkcji na tej samej karcie inteligentnej. Często
+systemy operacyjne kart chipowych są zastrzeżone.
+Niektóre karty elektroniczne są programowane na bazie języka Java. Oznacza to, że w pamięci
+ROM na karcie chipowej znajduje się interpreter wirtualnej maszyny Javy (Java Virtual
+Machine — JVM). Aplety Javy (niewielkie programy) są pobierane na kartę i interpretowane
+za pomocą interpretera JVM. Niektóre z kart obsługują wiele apletów Javy jednocześnie, co
+stwarza konieczność obsługi wieloprogramowości oraz potrzebę szeregowania zadań. Kiedy
+jednocześnie współistnieją dwa aplety lub większa ich liczba, problemem jest również zarzą-
+dzanie zasobami i zabezpieczenia. Problemy te muszą być rozwiązane przez system operacyjny
+zainstalowany na karcie (zwykle bardzo prymitywny).
+1.5. POJĘCIA DOTYCZĄCE SYSTEMÓW OPERACYJNYCH
+1.5.
+POJĘCIA DOTYCZĄCE SYSTEMÓW OPERACYJNYCH
+W większości systemów operacyjnych występują pewne podstawowe pojęcia i abstrakcje, takie
+jak procesy, przestrzenie adresowe i pliki. Zapoznanie się z tymi pojęciami ma kluczowe zna-
+czenie dla zrozumienia działania systemów operacyjnych. W poniższych punktach, tytułem
+wprowadzenia, zwięźle opiszemy niektóre z tych podstawowych pojęć. Do bardziej szczegóło-
+wego omówienia każdego z nich powrócimy w dalszych rozdziałach tej książki. Dla zilustrowa-
+nia tych pojęć od czasu do czasu będziemy się posługiwać przykładami — ogólnie rzecz biorąc,
+będą to przykłady z systemu UNIX. Przykłady podobnych pojęć zazwyczaj występują również
+w innych systemach operacyjnych. Niektóre z nich zostaną omówione w dalszej części tej
+książki.
+1.5.1. Procesy
+Kluczowym pojęciem we wszystkich systemach operacyjnych jest proces. Ogólnie proces to
+wykonujący się program. Z każdym procesem jest związana jego przestrzeń adresowa — lista
+lokalizacji pamięci od 0 do pewnego maksimum — z której system może czytać i do której
+może zapisywać informacje. Przestrzeń adresowa zawiera program wykonywalny, dane pro-
+gramu oraz jego stos. Z każdym procesem jest również związany zbiór zasobów, zwykle obej-
+mujący rejestry (w tym licznik programu i wskaźnik stosu), listę otwartych plików, zaległych
+alarmów, powiązanych procesów oraz wszystkie inne informacje potrzebne do uruchomienia
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plWPROWADZENIE
+66
+ROZ. 1
+programu. Ogólnie proces jest kontenerem zawierającym wszystkie informacje niezbędne do
+uruchomienia programu.
+Do pojęcia procesu powrócimy znacznie bardziej szczegółowo w rozdziale 2. Na razie, aby
+Czytelnik intuicyjnie poczuł, czym jest proces, posłużymy się przykładem systemu wielopro-
+gramowego. Załóżmy, że użytkownik uruchomił program edycji filmów wideo i wydał polecenie
+dokonania konwersji jednogodzinnego nagrania wideo na określony format (taka operacja może
+potrwać kilka godzin), a następnie zaczął przeglądać strony WWW. Tymczasem zaczął działać
+drugoplanowy proces, który okresowo budzi się i sprawdza przychodzącą pocztę. A zatem mamy
+(co najmniej) trzy aktywne procesy: edytor wideo, przeglądarkę WWW oraz klienta e-mail.
+System operacyjny okresowo podejmuje decyzję o zatrzymaniu jednego procesu i rozpoczęciu
+działania innego — np. dlatego, że pierwszy w ciągu ostatnich kilku sekund zużył znacznie
+więcej, niż wynosi jego kwant czasu procesora.
+Kiedy proces zostanie czasowo wstrzymany w taki sposób, musi później być wznowiony
+dokładnie w takim samym stanie, w jakim był, kiedy go zatrzymano. Oznacza to, że w momencie
+zawieszenia wszystkie informacje na temat procesu muszą być gdzieś jawnie zapisane. I tak
+proces może mieć otwartych jednocześnie do odczytu kilka plików. Z każdym z tych plików
+jest powiązany wskaźnik informujący o bieżącej pozycji (tzn. numerze bajtu lub rekordu, który
+ma być odczytany w następnej kolejności). Kiedy proces zostanie czasowo wstrzymany, wszyst-
+kie te wskaźniki muszą być zapisane tak, aby żądanie odczytu uruchomione po wznowieniu pro-
+cesu spowodowało odczytanie właściwych danych. W wielu systemach operacyjnych wszystkie
+informacje dotyczące każdego procesu poza zawartością jego własnej przestrzeni adresowej są
+zapisane w tabeli systemu operacyjnego nazywanej tabelą procesów. Jest to tablica struktur —
+po jednej dla każdego procesu istniejącego w systemie operacyjnym.
+Tak więc (zawieszony) proces składa się ze swojej przestrzeni adresowej, zazwyczaj nazy-
+wanej obrazem rdzenia (na pamiątkę używanych dawniej magnetycznych pamięci rdzeniowych)
+oraz wpisu w tabeli procesów — obejmującego zawartość rejestrów oraz wiele innych informacji
+potrzebnych do późniejszego wznowienia procesu.
+Kluczowymi wywołaniami systemowymi zarządzania procesami są zadania tworzenia i nisz-
+czenia procesów. Rozważmy typowy przykład. Proces pod nazwą interpreter poleceń lub powłoka
+czyta polecenia z terminala. Użytkownik właśnie wpisał polecenie żądania kompilacji programu.
+Powłoka musi teraz utworzyć nowy proces, który uruchomi kompilator. Kiedy ten proces zakoń-
+czy kompilację, wykonuje wywołanie systemowe w celu zniszczenia siebie.
+Jeśli proces może utworzyć jeden lub kilka innych procesów (określanych jako procesy
+potomne), a te procesy z kolei mogą tworzyć inne procesy potomne, szybko dojdziemy do
+drzewiastej struktury procesów podobnej do tej, którą pokazano na rysunku 1.13. Powiązane
+ze sobą procesy współpracujące w celu wykonania określonego zadania często muszą się ze
+sobą komunikować i synchronizować swoje działania. Tę wymianę informacji określa się termi-
+nem komunikacja międzyprocesowa. Zagadnienie to opiszemy szczegółowo w rozdziale 2.
+Rysunek 1.13. Drzewo procesów. Proces A utworzył dwa procesy potomne: B i C. Proces B
+utworzył trzy procesy potomne: D, E i F
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plPODROZ. 1.5.
+POJĘCIA DOTYCZĄCE SYSTEMÓW OPERACYJNYCH
+67
+Dostępne są również inne wywołania systemowe związane z obsługą procesów: żądanie
+dodatkowej pamięci (lub zwolnienie nieużywanej pamięci), oczekiwanie na zakończenie procesu
+potomnego oraz nakładanie jednego programu na inny program.
+Czasami występuje potrzeba przekazania informacji do działającego procesu, który nie
+oczekuje na tę informację; np. proces komunikujący się z innym procesem na innym kompute-
+rze robi to poprzez przesyłanie komunikatów do zdalnych procesów przez sieć komputerową.
+W celu zabezpieczenia się przed możliwością utraty komunikatu lub odpowiedzi na niego
+nadawca może zażądać, aby jego własny system operacyjny powiadomił go po upływie wskaza-
+nej liczby sekund. W ten sposób może ponowić próbę przesłania komunikatu, jeśli dotychczas
+nie otrzymano potwierdzenia. Po ustawieniu tego parametru czasowego program może konty-
+nuować wykonywanie innych zadań.
+Kiedy upłynie określona liczba sekund, system wysyła sygnał alarmowy do procesu. Sygnał
+powoduje czasowe zawieszenie aktualnie wykonywanych operacji przez proces, zapisanie zawar-
+tości rejestrów na stosie i rozpoczęcie wykonywania specjalnej procedury obsługi sygnałów —
+np. w celu ponowienia transmisji przypuszczalnie utraconego komunikatu. Kiedy procedura
+obsługi sygnału zakończy swoje działanie, następuje wznowienie działania procesu w stanie,
+w jakim znajdował on się bezpośrednio przed otrzymaniem sygnału. Sygnały są programowym
+odpowiednikiem sprzętowych przerwań. Można je generować z różnych powodów — nie tylko
+z powodu przekroczenia ustawionego licznika czasu. Wiele „pułapek” wykrytych przez sprzęt,
+takich jak uruchomienie niedozwolonej instrukcji lub wykorzystanie nieprawidłowego adresu,
+również jest przekształcanych na sygnały przesyłane do odpowiedzialnych procesów.
+Każdej osobie uprawnionej do korzystania z systemu jego administrator przydziela identyfi-
+kator UID (User IDentification). Każdy uruchomiony proces posiada identyfikator UID użytkow-
+nika, który go uruchomił. Proces potomny ma ten sam identyfikator UID, co jego proces-rodzic.
+Użytkownicy mogą być członkami grup. Do każdej grupy jest przypisany identyfikator GID
+(Group IDentification).
+Jeden identyfikator UID należący do superużytkownika (w systemie UNIX) ma specjalne
+prawa i może naruszać wiele reguł zabezpieczeń. W dużych instalacjach tylko administrator
+systemu zna hasło potrzebne do uzyskania praw superużytkownika. Wielu zwykłych użytkowni-
+ków (zwłaszcza studentów) wkłada jednak wiele wysiłku w próby znalezienia błędów w sys-
+temie, pozwalających im na uzyskanie praw superużytkownika bez znajomości hasła.
+Procesy, komunikację międzyprocesową oraz związane z tym zagadnienia omówimy
+w rozdziale 2.
+1.5.2. Przestrzenie adresowe
+Każdy komputer ma pewną ilość pamięci głównej, którą wykorzystuje do przechowywania uru-
+chamianych programów. W bardzo prostym systemie operacyjnym w danym momencie w pamięci
+znajduje się tylko jeden program. Uruchomienie drugiego programu wymaga wyrzucenia pierw-
+szego z pamięci i umieszczenia w pamięci drugiego.
+Bardziej zaawansowane systemy operacyjne umożliwiają jednoczesne przechowywanie
+w pamięci więcej niż jednego programu. Aby programy wzajemnie sobie nie przeszkadzały
+(a także by nie przeszkadzały systemowi operacyjnemu), potrzebny jest jakiś mechanizm zabez-
+pieczeń. Chociaż mechanizm ten musi być sprzętowy, jest zarządzany przez system operacyjny.
+Powyższe stwierdzenie dotyczy zarządzania i ochrony głównej pamięci komputera. Innym,
+ale równie ważnym problemem dotyczącym pamięci jest zarządzanie przestrzeni adresowej
+procesów. W normalnych warunkach każdy proces posiada pewien zbiór adresów, z których
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.pl68
+WPROWADZENIE
+ROZ. 1
+może korzystać — zwykle mają one numery od 0 do pewnego maksimum. W najprostszym
+przypadku maksymalny adres w przestrzeni adresowej procesu jest niższy od pojemności pamięci
+głównej. W ten sposób proces może wypełnić swoją przestrzeń adresową, a pamięć główna
+zawiera wystarczającą ilość miejsca na to, by zmieścić go w całości.
+Jednak w wielu komputerach adresy są 32- lub 64-bitowe, co sprawia, że przestrzeń adre-
+sowa wynosi odpowiednio 232 lub 264 bajtów. Co się stanie, jeśli proces ma więcej przestrzeni
+adresowej niż komputer pamięci i chce z niej skorzystać w całości? W komputerach starej daty
+taki proces po prostu nie miał szczęścia. Obecnie, jak wspomniano wcześniej, istnieje technika
+zwana pamięcią wirtualną. Pozwala ona systemowi operacyjnemu przechowywać część prze-
+strzeni adresowej w pamięci głównej, a część na dysku. W miarę potrzeb system operacyjny
+przesyła fragmenty pamięci pomiędzy tymi obszarami. Ogólnie rzecz biorąc, system operacyjny
+tworzy abstrakcję przestrzeni adresowej jako zbiór adresów, do których proces może się odwołać.
+Przestrzeń adresowa nie jest równoznaczna z fizyczną pamięcią maszyny. Może być od niej
+większa lub mniejsza. Zarządzanie przestrzenią adresową i pamięcią fizyczną stanowi istotną
+część zadań systemu operacyjnego. Temu tematowi poświęcono cały rozdział 3.
+1.5.3. Pliki
+Inne kluczowe pojęcie występujące niemal we wszystkich systemach operacyjnych to system
+plików. Jak wspomniano wcześniej, główną funkcją systemu operacyjnego jest ukrywanie oso-
+bliwości dysków oraz innych urządzeń wejścia-wyjścia i dostarczanie programistom wygodnego
+i czytelnego abstrakcyjnego modelu niezależnych plików. Oczywiście są potrzebne wywołania
+systemowe do tworzenia, usuwania, czytania i zapisywania plików. Przed odczytaniem pliku
+musi być on zlokalizowany na dysku i otwarty. Po odczytaniu danych trzeba go zamknąć.
+W związku z tym system operacyjny udostępnia wywołania do wykonywania tych operacji.
+Dla zapewnienia miejsca przechowywania plików w większości systemów operacyjnych
+komputerów PC występuje pojęcie katalogu jako sposobu grupowania plików. I tak student
+może utworzyć katalog dla każdego przedmiotu, który studiuje (w celu zapisania programów
+niezbędnych do zaliczenia tego przedmiotu), inny katalog przeznaczony na pocztę elektro-
+niczną, a jeszcze inny na swoją macierzystą stronę internetową. W związku z tym są potrzebne
+wywołania systemowe do tworzenia i usuwania katalogów. Dostępne są również wywołania
+umieszczenia istniejącego pliku w katalogu oraz usunięcia pliku z katalogu. Katalogi mogą zawie-
+rać pliki lub inne katalogi. Model ten tworzy hierarchię — system plików. Jej przykład pokazano
+na rysunku 1.14.
+Zarówno hierarchie procesów, jak i plików są zorganizowane w postaci drzew, ale na tym
+podobieństwa się kończą. Hierarchie procesów zwykle nie są zbyt głębokie (hierarchie obejmu-
+jące więcej niż trzy procesy należą do rzadkości), natomiast hierarchie plików zazwyczaj mają
+głębokość czterech, pięciu lub nawet większej liczby poziomów. Czas życia hierarchii proce-
+sów zwykle jest krótki — co najwyżej mierzony w minutach — natomiast hierarchia katalogów
+może istnieć wiele lat. Prawa własności i zabezpieczenia również są inne dla procesów, a inne dla
+plików. Zazwyczaj tylko proces-rodzic może zarządzać, a nawet uzyskać dostęp do procesu-dziecka.
+Z kolei w przypadku plików prawie zawsze istnieje mechanizm umożliwiający ich czytanie przez
+szerszą grupę użytkowników.
+Każdy plik w obrębie hierarchii katalogów może być określony za pomocą nazwy ścieżki,
+jeśli liczyć od szczytu hierarchii katalogów — katalogu głównego. Nazwy bezwzględnych ście-
+żek składają się z listy katalogów, które trzeba przejść od katalogu głównego, aby dostać się do
+pliku. Poszczególne komponenty są od siebie oddzielone ukośnikami. Na rysunku 1.14 ścieżka
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plPODROZ. 1.5.
+POJĘCIA DOTYCZĄCE SYSTEMÓW OPERACYJNYCH
+69
+Rysunek 1.14. System plików wydziału wyższej uczelni
+do pliku CS101 to /Kierunek/Prof.Brązowy/ GrupySzkoleniowe/CS101. Wiodący ukośnik wskazuje
+na to, że ścieżka jest bezwzględna — tzn. rozpoczyna się od katalogu głównego. Na marginesie
+warto dodać, że w systemie Windows z powodów historycznych w roli separatora zamiast uko-
+śnika (/) wykorzystywany jest lewy ukośnik — ang. backslash — (/). Tak więc ścieżka do pliku
+wymienionego wyżej miałaby postać \Kierunek\Prof.Brązowy\GrupySzkoleniowe\CS101. W niniej-
+szej książce do oznaczania ścieżek będziemy używać konwencji zgodnej z systemem UNIX.
+W dowolnym momencie każdy proces ma bieżący katalog roboczy, gdzie system poszukuje nazw
+ścieżek, które nie rozpoczynają się od ukośnika. Posłużmy się przykładem z rysunku 1.14 —
+gdyby /Kierunek/Prof.Brązowy był katalogiem roboczym, to wykorzystanie nazwy ścieżki Gru-
+pySzkoleniowe/CS101 prowadziłoby do tego samego pliku, co w przypadku nazwy ścieżki bez-
+względnej podanej powyżej. Procesy mogą zmieniać swój katalog roboczy za pomocą wywołania
+systemowego, w którym należy określić nowy katalog roboczy.
+Zanim będzie można odczytać lub zapisać plik, trzeba go otworzyć. W momencie otwierania
+plików są sprawdzane uprawnienia dostępu. Jeśli system zezwala na dostęp, zwraca liczbę cał-
+kowitą określaną jako deskryptor pliku, która będzie wykorzystywana w dalszych operacjach.
+Jeżeli system nie zezwala na dostęp, zwraca kod błędu.
+Innym ważnym pojęciem w systemie UNIX jest montowany system plików. Prawie wszyst-
+kie komputery osobiste są wyposażone w jeden lub kilka napędów dysków optycznych, do których
+można wkładać płyty CD, DVD lub dyski Blu-ray. Prawie zawsze komputery PC są wyposażone
+również w porty USB, do których można podłączać dyski pendrive (w rzeczywistości są to
+dyski SSD — ang. Solid State Disk). Niektóre komputery mają także stacje dysków elastycz-
+nych lub zewnętrzne dyski twarde. W celu zapewnienia eleganckiego sposobu obsługi tych
+wymienialnych nośników danych system UNIX pozwala na podłączanie systemu plików na
+dysku optycznym do głównego drzewa. Rozważmy sytuację z rysunku 1.15(a). Przed wywoła-
+niem polecenia montowania główny system plików na dysku twardym oraz drugi system plików
+na płycie CD-ROM są odrębne i niezwiązane ze sobą.
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plWPROWADZENIE
+70
+ROZ. 1
+Rysunek 1.15. (a) Przed zamontowaniem pliki na płycie CD-ROM są niedostępne;
+(b) po zamontowaniu tworzą część hierarchii plików
+Systemu plików na płycie CD-ROM nie można jednak używać, ponieważ nie ma sposobu zde-
+finiowania ścieżki, która by do niego prowadziła. W systemie UNIX nie ma możliwości poprze-
+dzania nazw ścieżek prefiksem w postaci nazwy lub numeru napędu. Byłby to rodzaj zależności
+od urządzeń, które systemy operacyjne powinny eliminować. Zamiast tego polecenie montowania
+systemu plików pozwala na dołączenie systemu plików na płycie CD-ROM do głównego systemu
+plików. Na rysunku 1.15(b) system plików na płycie CD-ROM zamontowano w katalogu b. W ten
+sposób stał się możliwy dostęp do plików /b/x i /b/y. Gdyby w katalogu b znajdowały się dowolne
+pliki, nie byłyby one dostępne w czasie, gdy jest zamontowany napęd CD-ROM, ponieważ
+ścieżka /b odnosi się wtedy do głównego katalogu na płycie CD-ROM (brak możliwości dostępu
+do tych plików nie jest tak poważnym problemem, jak wydaje się na pierwszy rzut oka: systemy
+plików prawie zawsze są montowane w pustych katalogach). Jeśli system zawiera wiele dysków
+twardych, wszystkie one również można zamontować w pojedynczą strukturę drzewa.
+Innym ważnym pojęciem w systemie UNIX jest plik specjalny. Pliki specjalne służą do tego,
+aby urządzenia wejścia-wyjścia wyglądały tak jak pliki. Dzięki temu można je odczytywać i zapi-
+sywać z wykorzystaniem tych samych wywołań systemowych, jakie wykorzystuje się do odczy-
+tywania i zapisywania plików. Istnieją dwa rodzaje plików specjalnych: blokowe pliki specjalne
+oraz znakowe pliki specjalne. Blokowe pliki specjalne służą do modelowania urządzeń składają-
+cych się z kolekcji losowo adresowalnych bloków, takich jak dyski. Dzięki otwarciu blokowego
+pliku specjalnego i odczytaniu np. bloku 4. program może uzyskać bezpośredni dostęp do
+czwartego bloku na urządzeniu bez względu na strukturę systemu plików na tym urządzeniu.
+Na podobnej zasadzie znakowe pliki specjalne są używane do modelowania drukarek, mode-
+mów i innych urządzeń, które akceptują lub wyprowadzają strumień znaków. Zgodnie z konwen-
+cją pliki specjalne są przechowywane w katalogu /dev; np. urządzenie /dev/lp może być odpo-
+wiednikiem drukarki (dawniej określanej jako drukarka wierszowa — ang. line printer).
+Ostatnim mechanizm, który omówimy w tym opisie, jest związany zarówno z procesami,
+jak i z plikami: są to potoki. Potok jest rodzajem pseudopliku, który można wykorzystać do połą-
+czenia dwóch procesów w sposób pokazany na rysunku 1.16. Jeśli procesy A i B chcą się ze
+sobą komunikować przez potok, muszą go wcześniej ustanowić. Kiedy proces A chce przesłać
+dane do procesu B, zapisuje informacje w potoku tak, jakby był on plikiem wynikowym. W rze-
+czywistości implementacja potoku bardzo przypomina implementację pliku. Proces B może
+czytać dane poprzez czytanie potoku w taki sposób, jakby był to plik wejściowy. Tak więc komu-
+nikacja między procesami w Uniksie wygląda bardzo podobnie do standardowych operacji odczytu
+i zapisu plików. Co więcej, jedynym sposobem na to, aby proces mógł wykryć, że plik wynikowy,
+do którego zapisuje informacje, nie jest rzeczywistym plikiem, okazuje się skorzystanie ze spe-
+cjalnego wywołania systemowego. Systemy plików są bardzo ważne. Więcej informacji na ten
+temat zamieścimy w rozdziale 4., a następnie w rozdziałach 10. i 11.
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plPODROZ. 1.5.
+POJĘCIA DOTYCZĄCE SYSTEMÓW OPERACYJNYCH
+71
+Rysunek 1.16. Dwa procesy połączone przez potok
+1.5.4. Wejście-wyjście
+Wszystkie komputery mają urządzenia fizyczne do pobierania danych wejściowych i genero-
+wania danych wynikowych. W końcu do czego miałyby służyć komputery, gdyby użytkownicy
+nie mogli im zlecić, co mają zrobić, i nie mogli uzyskać wyników po wykonaniu żądanej pracy?
+Istnieje wiele rodzajów urządzeń wejścia i wyjścia — należą do nich m.in. klawiatury, monitory,
+drukarki. Zarządzanie tymi urządzeniami jest zadaniem systemu operacyjnego.
+W konsekwencji każdy system operacyjny jest wyposażony w podsystem wejścia-wyjścia
+przeznaczony do zarządzania swoimi urządzeniami wejścia-wyjścia. Niektóre oprogramowanie
+wejścia-wyjścia jest niezależne od sprzętu — tzn. równie dobrze można je wykorzystywać dla
+wielu lub wszystkich urządzeń wejścia-wyjścia. Inne jego części, np. sterowniki urządzeń, są
+specyficzne dla wybranych urządzeń wejścia-wyjścia. Oprogramowaniem wejścia-wyjścia zaj-
+miemy się w rozdziale 5.
+1.5.5. Zabezpieczenia
+Komputery zawierają duże ilości informacji, które użytkownicy często chcą ochronić i zacho-
+wać poufność. Mogą to być wiadomości e-mail, biznesplany, zwroty podatków i wiele innych.
+Dbanie o bezpieczeństwo systemu jest zadaniem systemu operacyjnego. Musi on zadbać, aby
+np. pliki były dostępne tylko dla uprawnionych użytkowników.
+W roli prostego przykładu, aby zobrazować, w jaki sposób działają zabezpieczenia, wykorzy-
+stajmy system UNIX. Pliki w Uniksie są chronione poprzez przypisanie każdemu z nich 9-bitowego
+binarnego kodu zabezpieczającego. Kod zabezpieczający składa się z trzech 3-bitowych pól —
+jednego dla właściciela, drugiego dla członków grupy, do której należy właściciel (użytkownicy
+są dzieleni na grupy przez administratora systemu), oraz trzeciego dla wszystkich pozostałych
+użytkowników. W każdym polu jest bit określający prawo dostępu do odczytu, drugi bit okre-
+ślający prawo dostępu do zapisu oraz trzeci oznaczający prawo dostępu do uruchamiania. Te trzy
+bity określa się jako bity rwx. I tak kod zabezpieczenia rwxr-x-x oznacza, że właściciel może czytać,
+zapisywać lub uruchamiać plik, inni członkowie grupy mogą czytać lub uruchamiać plik (ale nie
+mogą go zapisywać), natomiast wszyscy pozostali mogą uruchamiać (ale nie mogą czytać ani
+zapisywać) plik. W przypadku katalogów bit x oznacza prawo do przeszukiwania. Myślnik występu-
+jący na danej pozycji oznacza brak wybranego uprawnienia.
+Oprócz zabezpieczeń plików istnieje wiele innych problemów bezpieczeństwa. Jednym
+z nich jest zabezpieczanie systemu przed intruzami, zarówno ludźmi, jak i programami (np. wiru-
+sami). Różne problemy zabezpieczeń omówimy w rozdziale 9.
+1.5.6. Powłoka
+System operacyjny jest kodem, który realizuje wywołania systemowe. Edytory, kompilatory,
+asemblery, linkery, programy narzędziowe czy interpretery poleceń niewątpliwie nie są czę-
+ścią systemu operacyjnego, choć są ważne i przydatne. Ryzykując pewne zaciemnienie obrazu,
+w tym punkcie zwięźle omówimy interpreter poleceń systemu UNIX — tzw. powłokę. Chociaż
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plWPROWADZENIE
+72
+ROZ. 1
+nie jest ona częścią systemu operacyjnego, intensywnie wykorzystuje wiele własności systemu
+operacyjnego, a tym samym służy za dobry przykład tego, jak można wykorzystać wywołania
+systemowe. Jest to również podstawowy interfejs pomiędzy użytkownikiem siedzącym przy
+terminalu a systemem operacyjnym (o ile użytkownik nie korzysta ze środowiska graficznego).
+Dostępnych jest wiele powłok, w tym sh, csh, ksh i bash. Wszystkie one obsługują własności
+opisane poniżej. Wywodzą się z pierwotnej powłoki (sh).
+Kiedy dowolny użytkownik loguje się do systemu, uruchamia się powłoka. Powłoka wyko-
+rzystuje terminal jako standardowe urządzenie wejściowe oraz standardowe urządzenie wyj-
+ściowe. Powłoka rozpoczyna od wyświetlenia symbolu zachęty (ang. prompt) — np. znaku dolara,
+który informuje użytkownika, że powłoka oczekuje na przyjęcie polecenia. Jeżeli użytkownik
+wpisze teraz np.:
+date
+to powłoka utworzy proces potomny i uruchomi program date. Podczas gdy proces potomny
+działa, powłoka oczekuje na jego zakończenie. Kiedy proces potomny zakończy działanie, powłoka
+ponownie wyświetli symbol zachęty i spróbuje odczytać następny wiersz.
+Użytkownik może wskazać, że standardowe wyjście ma być przekierowane do pliku, np.:
+date >plik
+Podobnie można przekierować standardowe wejście, np.:
+sort <plik1 >plik2
+Powyższe polecenie wywołuje program sort z danymi wejściowymi pobranymi z pliku plik1,
+natomiast wyniki są kierowane do pliku plik2.
+Wyjście jednego programu można wykorzystać jako wejście innego, poprzez połączenie ich
+za pomocą potoku. Tak więc polecenie:
+cat plik1 plik2 plik3 | sort >/dev/lp
+wywołuje program cat w celu konkatenacji trzech plików i wysyła wynik do programu sort
+w celu ułożenia wszystkich wierszy w porządku alfabetycznym. Wynik działania programu sort
+jest przekierowywany do pliku /dev/lp, który zwykle oznacza drukarkę.
+Jeśli użytkownik umieści znak & za poleceniem, powłoka nie będzie czekała na zakończenie
+jego działania. Zamiast tego natychmiast wyświetli symbol zachęty. W konsekwencji polecenie:
+cat plik1 plik2 plik3 | sort >/dev/lp &
+zainicjuje program sort jako zadanie działające w tle. Dzięki temu użytkownik może kontynu-
+ować normalną pracę w czasie, kiedy działa polecenie sort. Powłoka ma kilka innych intere-
+sujących własności, których nie omówimy w tej książce ze względu na ograniczone miejsce.
+Powłokę opisano dość szczegółowo w większości publikacji na temat Uniksa, np. [Kernighan
+i Pike, 1984], [Quigley, 2004], [Robbins, 2005].
+Wiele współczesnych komputerów osobistych korzysta z interfejsu GUI. W rzeczywistości
+GUI, podobnie jak powłoka, jest programem działającym jako nakładka systemu operacyjnego.
+W systemach linuksowych fakt ten jest oczywisty, ponieważ użytkownik ma do wyboru co naj-
+mniej dwa interfejsy GUI: GNOME, KDE. Może również całkowicie zrezygnować ze środowi-
+ska graficznego (wykorzystać okno terminala w systemie X11). W systemie Windows również
+można zastąpić standardowy pulpit graficzny (Windows Explorer) innym programem. W tym
+celu wystarczy zmienić kilka parametrów w rejestrze, ale robi to bardzo niewiele osób.
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plPODROZ. 1.5.
+POJĘCIA DOTYCZĄCE SYSTEMÓW OPERACYJNYCH
+73
+1.5.7. Ontogeneza jest rekapitulacją filogenezy
+Po wydaniu książki Karola Darwina O pochodzeniu gatunków niemiecki zoolog Ernst Haeckel
+sformułował twierdzenie, że „ontogeneza jest rekapitulacją filogenezy”. Mówiąc to, miał na myśli,
+że rozwój embrionu (ontogeneza) powtarza (tzn. rekapituluje) ewolucję gatunków (filogenezę).
+Innymi słowy, po zapłodnieniu ludzkie jajo przechodzi przez stadium ryby, świni itd., aż w końcu
+przyjmuje postać ludzkiego dziecka. Współcześni biologowie uważają to twierdzenie za zbyt
+wielkie uproszczenie, ale jest w nim ziarno prawdy.
+W branży komputerowej można dopatrzyć się analogicznej zasady. Każdy nowy gatunek
+(mainframe, minikomputer, komputer osobisty, palmtop, system wbudowany, karta chipowa itp.)
+przechodzi przez takie same fazy rozwoju, jak jego przodkowie — zarówno jeśli chodzi o sprzęt,
+jak i oprogramowanie. Często zapominamy, że większość tego, co dzieje się w branży kompu-
+terowej, a także w innych dziedzinach, zależy od stanu rozwoju cywilizacyjnego. Powodem tego,
+że po starożytnym Rzymie nie jeździły samochody, nie jest to, że Rzymianie lubili długie spa-
+cery. Prawdziwą przyczyną jest to, że Rzymianie nie wiedzieli, jak zbudować samochód. Kom-
+putery osobiste istnieją nie dlatego, że miliony osób przez wieki dążyły do posiadania kompu-
+terów, ale dlatego, że dziś jest możliwa ich tania produkcja. Często zapominamy, jak bardzo
+technika wpływa na nasz sposób postrzegania systemów. Od czasu do czasu warto się nad tym
+zastanowić.
+W szczególności często się zdarza, że zmiana w technice sprawia, że jakaś idea staje się prze-
+starzała i szybko znika z użycia. Może się jednak zdarzyć, że inna zmiana w technice z powrotem
+przywróci ją do życia. Jest to prawda zwłaszcza wtedy, gdy zmiana dotyczy względnej wydajno-
+ści różnych części systemu. Kiedy np. procesory stały się znacznie szybsze od pamięci, dużego
+znaczenia nabrały pamięci podręczne, których zadaniem było przyspieszenie „wolnej” pamięci.
+Jeśli pewnego dnia nowa technologia wytwarzania pamięci sprawi, że będą one szybsze niż
+procesory, pamięci podręczne znikną. A jeśli nowa technologia wytwarzania procesorów sprawi,
+że znów procesory będą szybsze od pamięci, pamięci podręczne pojawią się ponownie. W bio-
+logii wyginięcie gatunku odbywa się raz na zawsze, ale w informatyce czasami określona tech-
+nologia znika tylko na kilka lat.
+Ze świadomością tego faktu w tej książce od czasu do czasu będziemy omawiać „przesta-
+rzałe” pojęcia — tzn. pomysły, które według dzisiejszego stanu techniki nie są optymalne.
+Zmiany technologiczne mogą jednak przywrócić do łask niektóre z tzw. „przestarzałych pomy-
+słów”. Z tego powodu jest ważne, aby wiedzieć, dlaczego określona koncepcja jest przestarzała
+i jakie zmiany w środowisku mogą doprowadzić do tego, że zacznie być wykorzystywana
+ponownie.
+Aby to stwierdzenie stało się bardziej czytelne, rozważmy prosty przykład. W pierwszych
+komputerach zestaw instrukcji był zakodowany „na sztywno”. Instrukcje były uruchamiane
+bezpośrednio przez sprzęt i nie można ich było zmienić. Później nadeszła era mikroprogramo-
+wania (zapoczątkowana na dużą skalę w komputerze IBM 360), w której instrukcje sprzętowe
+wykonywał programowy interpreter. Zakodowane „na sztywno” uruchamianie instrukcji stało
+się przestarzałe.
+Nie było wystarczająco elastyczne. Później powstały komputery RISC i mikroprogramowa-
+nie (tzn. interpretowane uruchamianie instrukcji) stało się przestarzałe, ponieważ bezpośrednie
+uruchamianie instrukcji było szybsze. Obecnie obserwujemy powrót do interpreterów —
+w postaci apletów Javy, które są przesyłane w internecie i interpretowane po ściągnięciu.
+Szybkość uruchamiania instrukcji nie zawsze ma kluczowe znaczenie, ponieważ opóźnienia
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.pl74
+WPROWADZENIE
+ROZ. 1
+sieciowe są tak znaczne, że to one mają dominujące znaczenie. Tak więc historia pomiędzy
+bezpośrednim uruchamianiem a interpretacją już zatoczyła kilka cykli, a w przyszłości sytuacja
+znów może się zmienić.
+Pamięci o dużej pojemności
+Spróbujmy teraz przyjrzeć się historycznym zmianom w sprzęcie oraz sposobom, w jaki wpły-
+nęły one na oprogramowanie. Pierwsze komputery mainframe miały ograniczoną ilość pamięci.
+W pełni wyposażony komputer IBM 7090 lub 7094, który odgrywał rolę „króla wzgórz” od końca
+1959 do 1964 roku, miał niewiele ponad 128 kB pamięci. W większości był programowany
+w języku asemblera. Jego system operacyjny również został napisany w języku asemblera, po
+to, by zaoszczędzić cenną pamięć.
+Po upływie pewnego czasu kompilatory takich języków, jak FORTRAN i COBOL, stały się
+na tyle rozbudowane, że język asemblera uznano za martwy. Kiedy jednak wyprodukowano
+pierwszy komercyjny minikomputer (PDP-1), miał on tylko 4096 18-bitowych słów pamięci
+i niespodziewanie powrócono do języka asemblera. Ostatecznie w minikomputerach zaczęto insta-
+lować więcej pamięci. W związku z tym dominującą rolę odgrywały w nich języki wysokiego
+poziomu.
+Kiedy na początku lat osiemdziesiątych pojawiły się mikrokomputery, pierwsze egzempla-
+rze miały pamięci o pojemności 4 kB, w związku z czym język asemblera powstał z martwych.
+Komputery wbudowane często wykorzystywały te same układy mikroprocesorów, co mikrokom-
+putery (8080, Z80, a później 8086), i także początkowo programowano je w asemblerze. Obecnie
+ich potomkowie, komputery osobiste, mają pojemne pamięci i są programowane w językach C,
+C++, Javie oraz innych językach wysokiego poziomu. Karty chipowe przeżywają podobny roz-
+wój, choć te o większej pojemności często są wyposażone w interpreter Javy i interpretują pro-
+gramy Javy, zamiast kompilować je na język maszynowy kart chipowych.
+Zabezpieczenia sprzętowe
+Pierwsze komputery mainframe, np. IBM 7090/7094, nie posiadały zabezpieczeń sprzętowych,
+dlatego w danym momencie działał na nich tylko jeden program. Program zawierający błąd
+mógł zniszczyć system operacyjny i z łatwością doprowadzić do awarii maszyny. Wraz z powsta-
+niem komputera IBM 360 stały się dostępne prymitywne formy zabezpieczeń sprzętowych.
+Maszyny te były zdolne do przechowywania kilku programów w pamięci jednocześnie i cyklicz-
+nego ich uruchamiania (wieloprogramowość). Systemy jednoprogramowe uznano za przestarzałe.
+Działo się tak co najmniej do czasu pojawienia się pierwszych minikomputerów, które były
+pozbawione zabezpieczeń sprzętowych, zatem działanie wielu programów jednocześnie było
+niemożliwe. Choć komputery PDP-1 i PDP-8 nie miały zabezpieczeń sprzętowych, komputer
+PDP-11 je miał, a zatem możliwe stało się skorzystanie z wieloprogramowości, co w efekcie
+doprowadziło do powstania Uniksa.
+Pierwsze mikrokomputery wykorzystywały układ mikroprocesora 8080, który był pozba-
+wiony zabezpieczeń sprzętowych, zatem powrócono do trybu jednoprogramowego — w okre-
+ślonym czasie w pamięci był tylko jeden program. Było tak do chwili powstania układu Intel
+80286, do którego dodano zabezpieczenia sprzętowe, dzięki czemu stał się możliwy tryb wie-
+loprogramowy. Do dzisiejszego dnia wiele systemów wbudowanych nie posiada zabezpieczeń
+sprzętowych, dlatego działa w nich tylko jeden program.
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plPODROZ. 1.5.
+POJĘCIA DOTYCZĄCE SYSTEMÓW OPERACYJNYCH
+75
+Przyjrzyjmy się teraz systemom operacyjnym. Pierwsze komputery mainframe nie posia-
+dały sprzętu zabezpieczającego i nie obsługiwały wieloprogramowości, dlatego działały na nich
+proste systemy operacyjne, które w danym momencie obsługiwały jeden ręcznie ładowany pro-
+gram. Później w tych komputerach zastosowano odpowiedni sprzęt, a w systemach operacyj-
+nych zaimplementowano możliwość jednoczesnej obsługi wielu programów. W końcu systemy
+te uzyskały pełne możliwości technologii podziału czasu.
+Kiedy po raz pierwszy pojawiły się minikomputery, również nie miały one zabezpieczeń sprzę-
+towych i działał na nich jeden ręcznie załadowany program, choć w owym czasie w świecie
+komputerów mainframe wieloprogramowość miała dobrze ugruntowaną pozycję. Stopniowo
+w minikomputerach zaczęto wprowadzać zabezpieczenia sprzętowe, a systemy te zyskały moż-
+liwość uruchamiania dwóch lub większej liczby programów jednocześnie. Pierwsze mikro-
+komputery też mogły uruchamiać tylko jeden program na raz, ale później uzyskały możliwość
+stosowania wieloprogramowości. Komputery podręczne i karty chipowe przechodziły tę samą
+ścieżkę.
+We wszystkich przypadkach rozwój oprogramowania był podyktowany technologią, np.
+pierwsze mikrokomputery miały około 4 kB pamięci i nie posiadały zabezpieczeń sprzęto-
+wych. Stosowanie języków wysokopoziomowych i wieloprogramowości po prostu przekraczało
+możliwości tak niewielkich systemów. Kiedy mikrokomputery przekształciły się w nowoczesne
+komputery osobiste, uzyskały niezbędny sprzęt, a później oprogramowanie potrzebne do obsługi
+bardziej zaawansowanych funkcji. Jest wysoce prawdopodobne, że sytuacja będzie się rozwijała
+w podobny sposób w ciągu następnych lat. Być może w innych dziedzinach również obowiązuje
+to koło reinkarnacji, ale jak się wydaje, w branży komputerowej obraca się ono znacznie szybciej.
+Dyski
+W pierwszych komputerach mainframe używano głównie taśm magnetycznych. Komputery te
+czytały program z taśmy, kompilowały go, uruchamiały, a następnie zapisywały wyniki na innej
+taśmie. Nie było dysków i nie istniało pojęcie systemu plików. Sytuacja ta zaczęła się zmie-
+niać, kiedy w 1956 roku firma IBM wprowadziła na rynek pierwszy dysk twardy — RAMAC
+(RAndoM ACcess). Zajmował on powierzchnię około 4 m2 i mógł pomieścić 5 milionów 7-bitowych
+znaków — objętość wystarczającą do pomieszczenia jednego zdjęcia cyfrowego o średniej roz-
+dzielczości. Jeśli wziąć pod uwagę cenę rocznego wynajmu powierzchni potrzebnej na zbudo-
+wanie takiej liczby dysków, która byłaby zdolna pomieścić liczbę zdjęć odpowiadającą jednej rolce
+filmu — 35 tysięcy dolarów — trzeba przyznać, że było to przedsięwzięcie dość kosztowne.
+Ostatecznie jednak ceny spadły i powstały prymitywne systemy plików.
+Nowe osiągnięcia techniki zastosowano w systemie CDC 6600, opublikowanym w 1964 roku.
+Przez wiele lat był on zdecydowanie najszybszym komputerem na świecie. Jego użytkownicy
+mogli tworzyć tzw. „trwałe pliki” poprzez nadawanie im nazw. Kiedy użytkownik podejmował
+próbę nadania nazwy plikowi, musiał zadbać o to, by była ona unikatowa. Tak więc nadając pli-
+kowi nazwę dane, musiał liczyć, że nikt inny nie uzna jej za odpowiednią do nazwania swojego
+pliku. Był to jednopoziomowy katalog. Ostatecznie w komputerach mainframe opracowano zło-
+żone, hierarchiczne systemy plików. Ich kulminacją okazał się system plików MULTICS.
+Kiedy w użyciu pojawiły się minikomputery, po jakimś czasie również zaczęto w nich stoso-
+wać dyski twarde. Standardowym dyskiem w komputerze PDP-11 w momencie jego powstania
+w 1970 roku był dysk RK05 o pojemności 2,5 MB. To mniej więcej połowa objętości dysku
+RAMAC firmy IBM, ale dysk ten miał tylko około 40 cm średnicy i 5 cm wysokości. Jednak
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.pl76
+WPROWADZENIE
+ROZ. 1
+także na tym dysku początkowo stosowano jednopoziomowe katalogi. Kiedy pojawiły się mikro-
+komputery, początkowo dominującym systemem operacyjnym był na nich CP/M. Także ten
+system obsługiwał tylko jeden katalog na dysku (dyskietce elastycznej).
+Pamięć wirtualna
+Pamięć wirtualna (którą omówiono w rozdziale 3.) daje możliwość uruchamiania programów
+większych niż fizyczna objętość pamięci. Jest to możliwe dzięki przesyłaniu fragmentów pomiędzy
+pamięcią RAM a dyskiem. Także pamięć wirtualna przechodziła podobne cykle rozwoju — naj-
+pierw pojawiła się w komputerach mainframe, a następnie zaczęto ją stosować w mini- i mikro-
+komputerach. Pamięć wirtualna wprowadziła również możliwość dynamicznej konsolidacji
+biblioteki w fazie działania programu, bez konieczności jej kompilacji. Pierwszym systemem,
+w którym stało się to możliwe, był MULTICS. Ostatecznie idea uległa propagacji w dół i obec-
+nie jest powszechnie używana w większości systemów UNIX i Windows.
+W historii rozwoju wszystkich tych dziedzin widzimy idee, które powstały w jednym kon-
+tekście, później je zarzucono, kiedy kontekst się zmienił (programowanie w asemblerze, jedno-
+programowość, katalogi jednopoziomowe itp.), a ostatecznie pojawiły się ponownie, w innym
+kontekście, często o dekadę później. Z tego względu w niniejszej książce będziemy czasami
+zajmować się pomysłami i algorytmami, które dziś, w dobie wielogigabajtowych komputerów
+osobistych, mogą wydawać się przestarzałe. Mogą one jednak powrócić w systemach wbudowa-
+nych lub na kartach chipowych.
+1.6. WYWOŁANIA SYSTEMOWE
+1.6.
+WYWOŁANIA SYSTEMOWE
+Pokazaliśmy, że systemy operacyjne spełniają dwie główne funkcje: dostarczają abstrakcji pro-
+gramom użytkownika oraz zarządzają zasobami komputera. Większość interakcji pomiędzy pro-
+gramami użytkownika a systemem operacyjnym — np. tworzenie, zapisywanie, czytanie i usu-
+wanie plików — dotyczy pierwszej funkcji. Funkcja zarządzania zasobami jest w dużym stopniu
+przezroczysta dla użytkowników i realizowana automatycznie. A zatem interfejs pomiędzy
+programami użytkownika a systemem operacyjnym dotyczy przede wszystkim abstrakcji. Aby
+naprawdę zrozumieć działania wykonywane przez systemy operacyjne, musimy dokładnie
+przeanalizować ten interfejs. Wywołania systemowe dostępne w interfejsie są różne w różnych
+systemach operacyjnych (choć pojęcia, które się pod nimi kryją, są podobne).
+Jesteśmy zatem zmuszeni do dokonania wyboru pomiędzy (1) używaniem mglistych uogólnień
+(„w systemach operacyjnych są wywołania systemowe do czytania plików”) oraz (2) posługi-
+waniem się przykładem konkretnego systemu („w systemie UNIX jest wywołanie systemowe
+read z trzema parametrami: jeden określa plik, drugi mówi, gdzie mają być umieszczone dane,
+a trzeci informuje, ile bajtów ma być przeczytanych”).
+W tej książce wybraliśmy to drugie podejście. Wiąże się z tym więcej pracy, ale w ten spo-
+sób uzyskamy lepszy obraz tego, co faktycznie robi system operacyjny. Choć ta dyskusja jest
+specyficzna dla POSIX (ISO/IEC 9945-1), a więc do Uniksa, Systemu V, BSD, Linuksa, MINIX 3
+itp., większość nowoczesnych systemów operacyjnych oferuje wywołania systemowe realizu-
+jące te same funkcje, choć różniące się szczegółami. Ponieważ mechanizm wydawania wywołań
+systemowych jest w dużym stopniu zależny od maszyny i często musi być wyrażony w kodzie
+asemblera, trzeba korzystać z biblioteki procedur. Dzięki temu można wydawać wywołania sys-
+temowe z poziomu programów w języku C, a często także z poziomu innych języków.
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plPODROZ. 1.6.
+WYWOŁANIA SYSTEMOWE
+77
+Warto pamiętać o następującej regule. Każdy komputer z pojedynczym procesorem jest
+zdolny do uruchamiania tylko jednej instrukcji na raz. Jeśli proces uruchamia program użyt-
+kownika w trybie użytkownika i wymaga usługi systemowej, np. czytania danych z pliku, musi
+wykonać rozkaz pułapki w celu przekazania sterowania do systemu operacyjnego. Następnie
+system operacyjny dowiaduje się, czego chce proces wywołujący, poprzez inspekcję parame-
+trów. Później realizuje wywołanie systemowe i zwraca sterowanie do następnej instrukcji za
+wywołaniem systemowym. Wykonywanie wywołań systemowych w pewnym sensie przypomina
+wykonywanie wywołań procedur specjalnego rodzaju. Różnica polega na tym, że wywołania
+systemowe odwołują się do jądra, a wywołania procedur nie.
+Aby mechanizm wywołań systemowych stał się bardziej czytelny, przyjrzyjmy się bliżej
+wywołaniu read. Tak jak wspomniano wcześniej, korzysta ono z trzech parametrów: pierwszy
+określa plik, drugi wskaźnik do bufora, a trzeci informuje o liczbie bajtów do odczytania. Tak
+jak w przypadku niemal wszystkich wywołań systemowych, z programów w języku C jest ono
+inicjowane poprzez odwołanie do procedury bibliotecznej o takiej samej nazwie jak wywołanie
+systemowe: read. Instrukcja w programie napisanym w C może mieć następującą postać:
+count = read(fd, buffer, nbytes);
+Wywołanie systemowe (i procedura biblioteczna) zwracają liczbę przeczytanych bajtów w zmien-
+nej count. Wartość ta jest zwykle taka sama jak nbytes, ale może być mniejsza, jeśli np. pod-
+czas odczytu napotkano znak końca pliku.
+Jeśli nie można zrealizować wywołania systemowego — choćby z powodu nieprawidłowego
+parametru lub błędu dyskowego — zmienna count jest ustawiana na −1, a do zmiennej global-
+nej — errno — jest zapisywany numer kodu błędu. Programy zawsze powinny sprawdzać wyniki
+wywołań systemowych, aby przekonać się, czy nie wystąpił błąd.
+Wywołania systemowe są realizowane w postaci szeregu czynności. Dla wyjaśnienia tego
+pojęcia przeanalizujmy wywołanie read omówione wcześniej. Jako przygotowanie do wywoła-
+nia procedury bibliotecznej read, która faktycznie realizuje wywołanie systemowe read, pro-
+gram wywołujący najpierw umieszcza parametry na stosie, tak jak pokazano w krokach 1 – 3 na
+rysunku 1.17.
+Kompilatory C i C++ z powodów historycznych umieszczają parametry na stosie w odwró-
+conej kolejności (po to, aby pierwszy parametr instrukcji printf, ciąg formatujący, znalazł się
+na szczycie stosu). Pierwszy i trzeci parametr są wywołane przez wartość, natomiast drugi para-
+metr został przekazany przez referencję. Oznacza to, że przekazano adres bufora (na co wska-
+zuje symbol &), a nie jego zawartość. Następnie zachodzi właściwe wywołanie procedury
+bibliotecznej (krok 4.). To standardowa instrukcja wywołania procedury, wykorzystywana do
+wywoływania wszystkich procedur.
+Procedura biblioteczna, która może być napisana w języku asemblera, zwykle umieszcza
+numer wywołania systemowego w miejscu, w którym system operacyjny się go spodziewa, np.
+w rejestrze (krok 5.). Następnie wykonuje instrukcję TRAP w celu przełączenia procesora z trybu
+użytkownika do trybu jądra i rozpoczęcia uruchamiania kodu od wskazanego adresu w jądrze.
+Instrukcja TRAP jest w rzeczywistości dość podobna do instrukcji wywołania procedury w tym
+sensie, że występująca za nią instrukcja jest pobierana z lokalizacji zdalnej, a adres powrotu jest
+zapisywany na stosie do późniejszego wykorzystania.
+Niemniej jednak instrukcja TRAP różni się od instrukcji wywołania procedury dwiema zasadni-
+czymi cechami. Po pierwsze efektem ubocznym jej działania jest przełączenie procesora do
+trybu jądra. Instrukcja wywołania procedury nie zmienia trybu procesora. Po drugie instrukcja
+TRAP nie ma możliwości skoku pod dowolny adres, dlatego nie można przekazać do niej
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plWPROWADZENIE
+78
+ROZ. 1
+Rysunek 1.17. 11 kroków składających się na wykonanie wywołania systemowego read
+(fd, buffer, nbytes)
+względnego lub bezwzględnego adresu, pod którym jest umieszczona procedura. W zależności
+od architektury instrukcja wykonuje skok do ustalonej lokalizacji — w instrukcji jest 8-bitowe
+pole określające indeks tabeli w pamięci zawierającej adresy skoku.
+Kod jądra, który zaczyna działać za instrukcją TRAP, sprawdza numer wywołania systemo-
+wego, a następnie przesyła go do właściwej procedury obsługi wywołań systemowych — zwy-
+kle za pośrednictwem tabeli wskaźników do procedur obsługi wywołań systemowych poindek-
+sowanej według numeru wywołania systemowego (krok 7.). W tym momencie uruchamiane są
+procedury obsługi wywołań systemowych (krok 8.). Kiedy procedura obsługi wywołania sys-
+temowego zakończy pracę, sterowanie może być zwrócone do procedury bibliotecznej prze-
+strzeni użytkownika — do następnej instrukcji za instrukcją TRAP (krok 9.). Następnie proce-
+dura ta zwraca sterowanie do programu użytkownika w sposób, w jaki standardowo następuje
+powrót sterowania z wywołań procedur (krok 10.).
+W celu zakończenia zadania program użytkownika musi wyczyścić stos tak, jak po każdym
+wywołaniu procedury (krok 11.). Przy założeniu, że stos rośnie od dołu tak, jak to często się
+dzieje, skompilowany kod inkrementuje wskaźnik stosu dokładnie o taką wartość, jaka jest
+potrzebna do usunięcia parametrów odłożonych na stos przed wywołaniem instrukcji read. Pro-
+gram może teraz wykonywać dowolne dalsze instrukcje.
+W kroku 9., opisywanym powyżej, nieprzypadkowo powiedzieliśmy: „może być zwrócone
+do procedury bibliotecznej przestrzeni użytkownika”. Wywołanie systemowe może zabloko-
+wać proces wywołujący i nie pozwolić na kontynuowanie jego działania. Jeśli np. wywołanie
+systemowe próbuje czytać informacje z klawiatury, a użytkownik jeszcze nic nie wpisał, pro-
+ces wywołujący musi zostać zablokowany. W takim przypadku system operacyjny sprawdza,
+czy w następnej kolejności można uruchomić jakiś inny proces. Później, kiedy będą dostępne
+pożądane dane wejściowe, system zajmie się zablokowanym procesem i zostaną wykonane
+kroki 9. – 11.
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plPODROZ. 1.6.
+WYWOŁANIA SYSTEMOWE
+79
+W poniższych punktach przeanalizujemy niektóre z najczęściej używanych wywołań sys-
+temowych POSIX lub, mówiąc dokładniej, procedur bibliotecznych inicjujących te wywołania
+systemowe. W standardzie POSIX występuje około 100 wywołań systemowych. Niektóre
+z ważniejszych wyszczególniono w tabeli 1.1. Dla wygody pogrupowano je w cztery kategorie.
+W dalszej części tekstu zwięźle przeanalizujemy każde z wywołań, aby pokazać, jakie operacje
+wykonuje.
+Usługi oferowane przez te wywołania w dużym stopniu determinują większość operacji, które
+system musi wykonać, ponieważ funkcja zarządzania zasobami w komputerach osobistych ma
+charakter marginalny (przynajmniej w porównaniu z dużymi maszynami, z których korzysta
+wielu użytkowników). Usługi te obejmują takie elementy, jak tworzenie i niszczenie procesów,
+tworzenie, usuwanie, czytanie i zapisywanie plików, zarządzanie katalogami oraz realizacja
+operacji wejścia-wyjścia.
+Na marginesie warto dodać, że odwzorowanie wywołań procedur POSIX na wywołania sys-
+temowe nie jest odwzorowaniem jeden do jednego. Standard POSIX określa liczbę procedur,
+które system z nim zgodny musi obsługiwać, ale nie określa, czy to są wywołania systemowe,
+wywołania biblioteczne, czy coś innego. Jeśli procedura może być wykonana bez korzystania
+z wywołania systemowego (tzn. bez rozkazu pułapki do jądra), z powodów wydajnościowych
+zazwyczaj jest ona wykonywana w przestrzeni użytkownika. Jednak większość procedur POSIX
+realizuje wywołania systemowe. Zwykle występuje bezpośrednie odwzorowanie jednej proce-
+dury na jedno wywołanie systemowe. W nielicznych przypadkach, szczególnie gdy kilka wyma-
+ganych procedur niewiele się od siebie różni, jedno wywołanie systemowe obsługuje więcej niż
+jedno wywołanie biblioteczne.
+1.6.1. Wywołania systemowe do zarządzania procesami
+Pierwsza grupa wywołań przedstawionych w tabeli 1.1 dotyczy zarządzania procesami. Dobrym
+kandydatem do rozpoczęcia omawiania tej grupy jest instrukcja fork. Wykonanie instrukcji
+fork okazuje się w standardzie POSIX jedynym sposobem utworzenia nowego procesu. W jej
+wyniku tworzy się dokładny duplikat procesu oryginalnego, włącznie ze wszystkimi deskryp-
+torami plików, rejestrami — wszystkim.
+Po wykonaniu instrukcji fork proces pierwotny i jego kopia (rodzica i dziecka) zaczynają
+działać niezależnie. W momencie uruchamiania instrukcji fork wszystkie zmienne mają iden-
+tyczne wartości, ale ponieważ w celu utworzenia procesu-dziecka są kopiowane dane rodzica,
+dalsze zmiany w jednym z procesów nie mają wpływu na drugi z nich (tekst programu, który
+pozostaje niezmienny, jest współdzielony pomiędzy rodzica i dziecko). Wywołanie fork zwraca
+wartość, która wynosi zero w procesie-dziecku, natomiast w procesie-rodzicu jest równa identy-
+fikatorowi PID procesu-dziecka. Wykorzystując zwrócony identyfikator PID, te dwa procesy
+mogą zobaczyć, który z nich jest procesem-rodzicem, a który procesem-dzieckiem.
+W większości przypadków po wykonaniu instrukcji fork proces-dziecko uruchamia inny
+kod niż proces-rodzic. Rozważmy przypadek powłoki. Powłoka czyta polecenie z terminala, za
+pomocą wywołania fork tworzy proces-dziecko, czeka, aż proces-dziecko wykona polecenie,
+a następnie, kiedy proces-dziecko zakończy działanie, czyta następne polecenie. Aby zaczekać
+na zakończenie procesu-dziecka, proces-rodzic uruchamia wywołanie systemowe waitpid, które
+czeka, aż proces-dziecko zakończy działanie (dowolne dziecko, jeśli istnieje więcej niż jedno).
+Wywołanie waitpid może czekać na konkretne dziecko lub na dowolne wcześniej utworzone
+dziecko. W tym drugim przypadku należy ustawić pierwszy parametr tej instrukcji na wartość −1.
+Kiedy funkcja waitpid kończy działanie, adres wskazywany przez drugi parametr — statloc —
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plWPROWADZENIE
+80
+ROZ. 1
+Tabela 1.1. Niektóre z głównych wywołań systemowych POSIX. Jeśli zwrócony kod s
+ma wartość –1, oznacza to, że wystąpił błąd. Znaczenie kodów powrotu jest następujące: pid
+oznacza identyfikator procesu, fd to deskryptor pliku, n oznacza liczbę bajtów, position określa
+przesunięcie wewnątrz pliku, a seconds to czas, który upłynął. Parametry zostały objaśnione
+w tekście
+Zarządzanie procesami
+Wywołanie
+Opis
+pid = fork()Tworzy proces potomny identyczny z procesem-rodzicem
+pid = waitpid(pid, &statloc, options)Oczekuje na zakończenie procesu potomnego
+s = execve(name, argv, environp)Uruchamia proces
+exit(status)Kończy działanie procesu i zwraca jego stan
+Zarządzanie plikami
+Wywołanie
+Opis
+fd = open(file, how, ...)Otwiera plik do odczytu, zapisu lub do odczytu i zapisu jednocześnie
+s = close(fd)Zamyka otwarty plik
+n = read(fd, buffer, nbytes)Odczytuje dane z pliku do bufora
+n = write(fd, buffer, nbytes)Zapisuje dane z bufora do pliku
+position = lseek(fd, offset, whence)Przesuwa wskaźnik pliku
+s = stat(name, &buf)Odczytuje informacje dotyczące statusu pliku
+Zarządzanie katalogami i systemem plików
+Wywołanie
+Opis
+s = mkdir(name,mode)Tworzy nowy katalog
+s = rmdir(name)Usuwa pusty katalog
+s = link(name1, name2)Tworzy nową pozycję, name2, wskazującą na name1
+s = unlink(name)Usuwa katalog
+s = mount(special, name, flag)Montuje system plików
+s = umount(special)Odmontowuje system plików
+Różne
+Wywołanie
+Opis
+s = chdir(dirname)Zmienia katalog roboczy
+s = chmod(name,mode)Zmienia bity oznaczające prawa dostępu do pliku
+s = kill(pid, signal)Wysyła sygnał do procesu
+seconds = time(&seconds)Odczytuje czas, który upłynął od 1 stycznia 1970 roku
+jest ustawiany na wartość statusu wyjścia procesu-dziecka (zakończenie w trybie zwykłym lub
+nadzwyczajnym i kod wyjścia). Dostępne są również różne opcje, określone za pomocą trze-
+ciego parametru, np. natychmiastowe zwrócenie sterowania, jeżeli żaden proces-dziecko jeszcze
+nie zakończył działania.
+Rozważmy teraz, w jaki sposób powłoka korzysta z wywołania fork. Po wpisaniu polecenia
+powłoka, wykorzystując wywołanie fork, tworzy nowy proces. Utworzony proces-dziecko ma
+za zadanie uruchomienie polecenia użytkownika. W tym celu wykorzystuje wywołanie syste-
+mowe execve, które powoduje zastąpienie całego obrazu pamięci procesu (ang. core image) zawar-
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plPODROZ. 1.6.
+WYWOŁANIA SYSTEMOWE
+81
+tością pliku wymienionego za pomocą pierwszego parametru (właściwie wykorzystywane wywo-
+łanie systemowe nosi nazwę exec, ale różne procedury biblioteczne wywołują je z różnymi
+parametrami oraz nieco zmienionymi nazwami; w niniejszej książce będziemy je traktować jak
+osobne wywołania systemowe). Bardzo uproszczony kod powłoki, w którym zaprezentowano
+użycie wywołań systemowych fork, waitpid i execve, został pokazany na listingu 1.1.
+Listing 1.1. Uproszczona powłoka; w niniejszej książce zakładamy, że stała TRUE
+jest zdefiniowana jako 1
+#define TRUE 1
+while (TRUE) {
+/* pętla nieskończona */
+type_prompt( );
+/* wyświetlenie na ekranie symbolu zachęty */
+czytaj_polecenie(polecenie, parametry); /* odczyt danych wejściowych z terminala */
+if (fork() != 0) {
+/* Kod rodzica. */
+waitpid(−1, &status, 0);
+} else {
+/* Kod procesu-dziecka. */
+execve(command, parameters, 0);
+}
+/* utworzenie procesu-dziecka */
+/* oczekiwanie na zakończenie procesu-dziecka */
+/* wykonanie polecenia */
+}
+W najbardziej ogólnym przypadku wywołanie execve wykorzystuje trzy parametry: nazwę
+pliku do uruchomienia, wskaźnik do tablicy z argumentami oraz wskaźnik do tablicy zawierającej
+zmienne środowiskowe. Opiszemy je wkrótce. Dostępnych jest kilka procedur bibliotecznych
+execl, execv, execle i execve. Pozwalają one na pomijanie niektórych parametrów lub podawa-
+nie ich na różne sposoby. W niniejszej książce będziemy używać nazwy exec do reprezentowa-
+nia wywołania systemowego inicjowanego przez wszystkie te procedury.
+Rozważmy przypadek następującego polecenia:
+cp plik1 plik2
+wykorzystywanego do skopiowania pliku plik1 do pliku plik2. Po zainicjowaniu nowego pro-
+cesu za pomocą wywołania systemowego fork proces-dziecko wyszukuje i uruchamia polece-
+nie cp, do którego przekazuje nazwy pliku źródłowego i docelowego.
+Główny program polecenia cp (a także główne programy większości innych programów napi-
+sanych w języku C) zawiera deklarację:
+main(argc, argv, envp)
+gdzie argc oznacza liczbę elementów w wierszu polecenia włącznie z nazwą programu; np.
+w powyższym przykładzie argument argc ma wartość 3.
+Drugi parametr, argv, zawiera wskaźnik do tablicy. Element numer i w tej tablicy jest
+wskaźnikiem do i-tego ciągu znaków w wierszu poleceń. W naszym przykładzie argv[0] wskazuje
+na ciąg „cp”, argv[1] wskazuje na ciąg „plik1”, natomiast argv[2] wskazuje na ciąg „plik2”.
+Trzeci parametr funkcji main — envp — to wskaźnik do tablicy zmiennych środowiskowych.
+Zawiera ona pary postaci nazwa = wartość. Wykorzystuje się je do przekazywania do programów
+takich informacji, jak typ terminala czy nazwa katalogu macierzystego. Dostępne są procedury
+biblioteczne, które program może wywołać w celu uzyskania wartości zmiennych środowi-
+skowych. Często wykorzystuje się je w celu dostosowania sposobu wykonywania określonych
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plWPROWADZENIE
+82
+ROZ. 1
+działań do indywidualnych potrzeb użytkownika (np. domyślna drukarka). W kodzie z listingu 1.1
+do procesu-dziecka nie przekazano żadnych zmiennych środowiskowych, dlatego trzecim para-
+metrem wywołania execve jest zero.
+Jeśli polecenie exec wydaje się Czytelnikowi zbyt skomplikowane, nie ma powodu do zała-
+mywania się. Jest ono (semantycznie) najbardziej złożonym spośród wszystkich wywołań syste-
+mowych POSIX. Wszystkie pozostałe są znacznie prostsze. Przykładem prostego wywołania
+systemowego jest exit. Procesy wykorzystują je podczas kończenia swojego działania. Wywoła-
+nie ma jeden parametr — status wyjścia (od 0 do 255) — wartość zwracaną do procesu-rodzica
+za pomocą parametru statloc w wywołaniu systemowym waitpid.
+Pamięć procesów w systemie UNIX jest podzielona na trzy segmenty: segment tekstu (tzn.
+kod programu), segment danych (tzn. zmienne) i segment stosu. Segment danych rośnie w górę,
+natomiast stos rośnie w dół, tak jak pokazano na rysunku 1.18. Pomiędzy nimi jest luka nie-
+używanej przestrzeni adresowej. Stos wzrasta w sposób automatyczny, w miarę potrzeb, nato-
+miast zwiększenie rozmiaru segmentu danych jest wykonywane jawnie za pomocą wywołania
+systemowego brk. Wywołanie to określa nowy adres, w którym ma się zakończyć segment danych.
+Wywołanie to nie jest jednak zdefiniowane przez standard POSIX. Programistom zaleca się
+wykorzystanie procedury bibliotecznej malloc do dynamicznego zarządzania pamięcią. Imple-
+mentację funkcji malloc uznano jednak za niezbyt nadającą się do standaryzacji, gdyż niewielu
+programistów używa jej bezpośrednio. Poza tym mało osób wie o tym, że wywołanie brk nie jest
+częścią standardu POSIX.
+Rysunek 1.18. Procesy mają trzy segmenty: tekstu, danych i stosu
+1.6.2. Wywołania systemowe do zarządzania plikami
+Wiele wywołań systemowych jest związanych z systemem plików. W tym punkcie omówimy
+wywołania operujące na indywidualnych plikach, w następnych powiemy o tych, które dotyczą
+katalogów lub systemów plików jako całości.
+Aby odczytać lub zapisać plik, trzeba go najpierw otworzyć za pomocą wywołania open. Wywo-
+łanie to określa nazwę pliku do otwarcia, w postaci ścieżki bezwzględnej lub względnej według
+katalogu roboczego, a także kod O_RDONLY, O_WRONLY lub O_RDWR, oznaczający otwieranie pliku do
+odczytu, zapisu lub obu tych operacji. Aby stworzyć nowy plik, należy użyć parametru O_CREAT.
+Następnie można wykorzystać deskryptor pliku do realizacji operacji odczytu lub zapisu. Po
+ich wykonaniu można zamknąć plik za pomocą wywołania close. W jego wyniku deskryptor pliku
+staje się dostępny do wykorzystania w kolejnym wywołaniu open.
+Najczęściej używanymi wywołaniami są bez wątpienia wywołania read i write. Z wywoła-
+niem read mieliśmy do czynienia wcześniej. Wywołanie write ma te same parametry.
+Choć większość programów odczytuje i zapisuje pliki sekwencyjnie, niektóre aplikacje wyma-
+gają losowego dostępu do dowolnej części pliku. Z każdym plikiem jest powiązany wskaźnik,
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plPODROZ. 1.6.
+WYWOŁANIA SYSTEMOWE
+83
+który określa w nim bieżącą pozycję. Podczas sekwencyjnego odczytu (zapisu) zwykle wska-
+zuje on na następny bajt do odczytania (zapisania). Wywołanie lseek zmienia wartość pozycji
+wskaźnika, dzięki czemu kolejne wywołania read lub write mogą się rozpocząć w dowolnym
+miejscu pliku.
+Polecenie lseek ma trzy parametry: pierwszy oznacza deskryptor pliku, drugi pozycję pliku,
+a trzeci informuje o tym, czy pozycja pliku jest oznaczona względem początku pliku, pozycji
+bieżącej, czy końca pliku. Wartość zwracana przez lseek to bezwzględna pozycja w pliku (wyra-
+żona w bajtach) po zmianie wskaźnika.
+System UNIX dla każdego pliku śledzi jego tryb (plik zwykły, specjalny, katalog itd.), roz-
+miar, czas ostatniej modyfikacji oraz inne informacje. Programy mogą żądać tych informacji za
+pomocą wywołania systemowego stat. Pierwszy parametr określa plik do inspekcji, drugi jest
+wskaźnikiem do struktury, w której mają być umieszczone informacje. Tę samą operację dla
+otwartego pliku przeprowadzają wywołania fstat.
+1.6.3. Wywołania systemowe do zarządzania katalogami
+W tym punkcie przyjrzymy się kilku wywołaniom systemowym dotyczącym katalogów lub
+całego systemu plików, a nie pojedynczego pliku, jak w przypadku wywołań w poprzednim
+punkcie. Dwa pierwsze wywołania — mkdir i rmdir — odpowiednio tworzą i usuwają puste
+katalogi. Następne wywołanie to link. Jego zadaniem jest umożliwienie temu samemu plikowi
+występowania pod dwiema lub wieloma nazwami. Często pliki te występują w różnych katalogach.
+Typowym zastosowaniem jest umożliwienie kilku członkom tego samego zespołu programi-
+stów na współdzielenie pliku. Każdy z nich ma dostęp do pliku z poziomu własnego katalogu,
+przy czym mogą to być pliki występujące pod różnymi nazwami. Współdzielenie pliku nie jest
+tym samym, co przydzielanie każdemu członkowi zespołu prywatnej kopii. Posiadanie współ-
+dzielonego pliku oznacza, że zmiany wykonywane przez dowolnego członka zespołu są natych-
+miast widoczne dla innych członków zespołu — jest przecież tylko jeden plik. Podczas wykony-
+wania kopii pliku zmiany w odniesieniu do jednej kopii nie mają wpływu na pozostałe.
+Aby zobaczyć, jak działa wywołanie link, rozważmy sytuację z rysunku 1.19(a). Mamy tam
+dwóch użytkowników o imionach adam i jerzy — każdy z nich posiada własny katalog zawiera-
+jący po kilka plików. Jeśli adam uruchomi program zawierający wywołanie systemowe:
+link("/usr/jerzy/noty", "/usr/adam/komunikaty");
+to plik nota w katalogu jerzy trafi do katalogu adam pod nazwą komunikat. Po wykonaniu tej
+operacji ścieżki /usr/jerzy/nota i /usr/adam/komunikat będą odwoływać się do tego samego pliku.
+Na marginesie dodajmy, że decyzja o tym, czy katalogi użytkowników będą przechowywane
+w katalogu /usr, /user, /home, czy gdzieś indziej, należy do lokalnego administratora systemu.
+Rysunek 1.19. (a) Dwa katalogi przed wykonaniem wywołania link pliku /usr/jerzy/nota do katalogu
+użytkownika adam; (b) te same katalogi po wykonaniu operacji
+helion kopia dla: Lukasz Konieczny uniwersalista@o2.plWPROWADZENIE
+84
+ROZ. 1
+Spróbujmy przyjrzeć się nieco bliżej sposobowi działania operacji link. Każdy plik w sys-
+temie UNIX ma przypisany unikatowy numer — tzw. i-numer, który identyfikuje plik. Numer
+ten jest indeksem do tabeli i-węzłów, zawierającej po jednym wpisie na plik. Informują one, kto
+jest właścicielem pliku, gdzie znajdują się bloki na dysku itd. Katalog jest po prostu plikiem
+zawierającym zbiór par (i-numer, nazwa ASCII). W pierwszych wersjach Uniksa każda pozycja
+katalogu miała 16 bajtów — 2 bajty były przeznaczone na i-węzeł oraz 14 bajtów na nazwę pliku.
+Obecnie do obsługi długich nazw plików jest wymagana bardziej złożona struktura, ale poję-
+ciowo katalog w dalszym ciągu jest zbiorem par (i-węzeł, nazwa ASCII). Na rysunku 1.19 plik
+poczta ma i-numer równy 16. Wywołanie link tworzy w katalogu nowy wpis zawierający nazwę
+ASCII (która może być różna od wyjściowej) oraz i-numer istniejącego pliku. Na rysunku 1.19(b)
+dwóm wpisom odpowiada ten sam i-numer (70), a zatem odnoszą się one do tego samego pliku.
+Jeśli dowolny z nich zostanie później usunięty za pomocą wywołania systemowego unlink, drugi
+pozostanie. Jeżeli oba będą usunięte, UNIX zobaczy, że nie istnieją żadne wpisy związane z pli-
+kiem (pole w i-węźle śledzi liczbę wpisów w katalogach wskazujących na plik), a zatem plik zostaje
+usunięty z dysku.
+Jak wspominaliśmy wcześniej, wywołanie systemowe mount pozwala na połączenie dwóch
+systemów plików w jeden. W typowej konfiguracji na twardym dysku (partycji) znajduje się główny
+system plików zawierający binarne (wykonywalne) wersje popularnych poleceń oraz innych,
+często używanych plików, natomiast pliki użytkownika są zapisane na innej
